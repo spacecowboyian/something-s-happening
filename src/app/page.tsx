@@ -1,3 +1,7 @@
+'use client';
+
+import { Button } from '@/components/Button';
+
 export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
@@ -6,25 +10,15 @@ export default function Home() {
           Something&apos;s Happening
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl">
-          Welcome to your Next.js React application. This project is ready for development!
+          Welcome to your Next.js React application. This project is ready for development with react-aria and a default dark theme!
         </p>
         <div className="flex flex-col gap-4 sm:flex-row">
-          <a
-            href="https://nextjs.org/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
+          <Button onPress={() => window.open('https://nextjs.org/docs', '_blank')}>
             Read the Docs
-          </a>
-          <a
-            href="https://github.com/vercel/next.js"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
-          >
-            View on GitHub
-          </a>
+          </Button>
+          <Button onPress={() => window.open('https://react-spectrum.adobe.com/react-aria/', '_blank')}>
+            React Aria Docs
+          </Button>
         </div>
       </main>
     </div>
