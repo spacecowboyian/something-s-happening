@@ -11,6 +11,14 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+/**
+ * Hook to access and manage the current theme.
+ * @returns An object containing the current theme and a function to update it.
+ * @throws Error if used outside of ThemeProvider.
+ * @example
+ * const { theme, setTheme } = useTheme();
+ * setTheme('dark'); // Switch to dark theme
+ */
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (!context) {
