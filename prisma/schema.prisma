@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Event model for aggregation prototype
+model Event {
+  id           String       @id @default(cuid())
+  slug         String       @unique
+  title        String
+  description  String?
+  centerLat    Float?
+  centerLng    Float?
+  radiusMeters Int?
+  startsAt     DateTime
+  endsAt       DateTime?
+  status       EventStatus  @default(OPEN)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  
+  sourcePosts  SourcePost[]
+  ingestRuns   IngestRun[]
+}
+
+// Source post from various platforms
+model SourcePost {
+  id             String       @id @default(cuid())
+  platform       Platform
+  platformPostId String
+  url            String
+  authorHandle   String?
+  postedAt       DateTime
+  capturedAt     DateTime     @default(now())
+  lat            Float?
+  lng            Float?
+  mediaType      MediaType
+  text           String?
+  eventId        String
+  
+  event          Event        @relation(fields: [eventId], references: [id])
+  
+  @@unique([platform, platformPostId])
+  @@index([eventId])
+}
+
+// Ingest run tracking
+model IngestRun {
+  id            String       @id @default(cuid())
+  eventId       String
+  platform      Platform
+  startedAt     DateTime     @default(now())
+  finishedAt    DateTime?
+  status        IngestStatus
+  errorMessage  String?
+  itemsFound    Int          @default(0)
+  itemsInserted Int          @default(0)
+  
+  event         Event        @relation(fields: [eventId], references: [id])
+}
+
+// Enums
+enum EventStatus {
+  OPEN
+  CLOSED
+}
+
+enum Platform {
+  X
+  BLUESKY
+  YOUTUBE
+  OTHER
+}
+
+enum MediaType {
+  VIDEO
+  IMAGE
+  AUDIO
+  TEXT
+  LINK
+}
+
+enum IngestStatus {
+  SUCCESS
+  ERROR
+}
