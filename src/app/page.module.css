@@ -1,0 +1,55 @@
+/**
+ * Page Layout Styles
+ * Uses CSS custom properties for theme support
+ */
+
+.pageContainer {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-100) 0%,
+    var(--color-secondary-100) 100%
+  );
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2xl);
+  padding: var(--spacing-2xl);
+  text-align: center;
+  max-width: 1200px;
+}
+
+.title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-4xl);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.description {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-xl);
+  color: var(--color-text-secondary);
+  max-width: 672px;
+  margin: 0;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Responsive: Switch to row layout on larger screens */
+@media (min-width: 640px) {
+  .buttonGroup {
+    flex-direction: row;
+  }
+}
