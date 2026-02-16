@@ -58,7 +58,7 @@ Each user story should follow this format and be saved as a separate `.md` file 
 # [Story Title]
 
 ## Status
-- [ ] Not Started
+- [x] Not Started
 - [ ] In Progress
 - [ ] Completed
 
