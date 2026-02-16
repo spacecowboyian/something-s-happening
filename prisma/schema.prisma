@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// Event model - represents a specific happening/event
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  location    String?
+  latitude    Float?
+  longitude   Float?
+  startTime   DateTime
+  endTime     DateTime?
+  status      String   @default("upcoming") // live, upcoming, completed
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  media       Media[]
+  
+  @@index([status, startTime])
+  @@index([startTime, endTime])
+}
+
+// Media model - represents media items associated with events
+model Media {
+  id          String   @id @default(uuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  
+  type        String   // image, video, text
+  source      String   // twitter, instagram, reddit, manual
+  sourceUrl   String?  // original URL if from external source
+  sourceId    String?  // external source ID
+  
+  url         String   // CDN or storage URL
+  thumbnailUrl String? // thumbnail for videos
+  
+  title       String?
+  description String?
+  author      String?
+  authorUrl   String?
+  
+  timestamp   DateTime // when the media was created/posted
+  metadata    String?  // JSON string for additional data
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([eventId, timestamp])
+  @@index([source, sourceId])
+  @@index([timestamp])
+}
