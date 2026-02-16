@@ -1,0 +1,159 @@
+/**
+ * EventCard Component Styles
+ * Uses CSS custom properties for theme support
+ */
+
+.card {
+  /* Layout */
+  display: flex;
+  gap: var(--spacing-md);
+  position: relative;
+}
+
+.timeline {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  padding-top: var(--spacing-xs);
+}
+
+.timelineDot {
+  /* Size */
+  width: 12px;
+  height: 12px;
+  
+  /* Colors */
+  background-color: var(--color-primary-500);
+  border: 2px solid var(--color-surface);
+  
+  /* Shape */
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  
+  /* Positioning */
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.timelineLine {
+  /* Size */
+  width: 2px;
+  flex: 1;
+  
+  /* Colors */
+  background-color: var(--color-border);
+  
+  /* Positioning */
+  margin-top: var(--spacing-xs);
+}
+
+/* Hide line on last card */
+.card:last-child .timelineLine {
+  display: none;
+}
+
+.content {
+  /* Layout */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-lg);
+}
+
+.header {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.timestamp {
+  /* Typography */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-sm);
+  color: var(--color-text-secondary);
+  
+  /* Layout */
+  font-family: var(--font-family-mono);
+}
+
+.source {
+  /* Typography */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-sm);
+  color: var(--color-primary-600);
+  text-decoration: none;
+  
+  /* Effects */
+  transition: color var(--transition-fast);
+}
+
+.source:hover {
+  color: var(--color-primary-700);
+  text-decoration: underline;
+}
+
+.mediaContainer {
+  /* Layout */
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  
+  /* Colors */
+  background-color: var(--color-surface-variant);
+  
+  /* Effects */
+  box-shadow: var(--shadow-sm);
+}
+
+.media {
+  /* Layout */
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.text {
+  /* Typography */
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-lg);
+  color: var(--color-text-primary);
+  
+  /* Layout */
+  margin: 0;
+  word-wrap: break-word;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card {
+    gap: var(--spacing-sm);
+  }
+  
+  .timeline {
+    width: 20px;
+  }
+  
+  .timelineDot {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .media {
+    max-height: 300px;
+  }
+}
