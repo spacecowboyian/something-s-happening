@@ -117,8 +117,6 @@
   width: 100%;
   height: auto;
   display: block;
-  max-height: 400px;
-  object-fit: cover;
 }
 
 .text {
@@ -151,9 +149,5 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-xs);
-  }
-  
-  .media {
-    max-height: 300px;
   }
 }

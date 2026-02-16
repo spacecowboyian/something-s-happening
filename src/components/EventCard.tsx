@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import styles from './EventCard.module.css';
 
 export interface EventCardProps {
@@ -53,10 +54,13 @@ export function EventCard({
         
         {mediaUrl && mediaType === 'image' && (
           <div className={styles.mediaContainer}>
-            <img 
+            <Image 
               src={mediaUrl} 
               alt={content} 
               className={styles.media}
+              width={800}
+              height={400}
+              style={{ width: '100%', height: 'auto' }}
             />
           </div>
         )}
