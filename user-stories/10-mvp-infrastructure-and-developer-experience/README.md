@@ -12,6 +12,7 @@ This epic focuses on developer productivity and infrastructure:
 - AI-assisted development workflows
 - GitHub Copilot integration
 - Development environment setup
+- Environment configuration and deployment
 - Documentation and onboarding
 
 ## Key User Flows
@@ -20,6 +21,7 @@ This epic focuses on developer productivity and infrastructure:
 3. **Copilot Integration**: Developer works on story → Copilot assists with context
 4. **Local Development**: New developer → quick setup → productive immediately
 5. **Documentation**: Developer needs info → finds clear, up-to-date docs
+6. **Deployment**: Code merged → automatic deployment → monitoring confirms health
 
 ## Technical Considerations
 - GitHub Actions workflows
@@ -30,6 +32,14 @@ This epic focuses on developer productivity and infrastructure:
 - Development dependencies and tooling
 - Environment variable management
 - Database migration strategies
+- Secrets management
+- Deployment automation
+
+## User Stories
+
+### Infrastructure Setup (MVP Critical)
+- **10-001**: CI/CD Pipeline Setup - Automated testing and deployment
+- **10-002**: Environment Configuration and Deployment Setup - Environment management and deployment processes
 
 ## MVP Priority
 🔴 Critical - Enables efficient development of everything else
