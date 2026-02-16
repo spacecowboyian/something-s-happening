@@ -1,6 +1,9 @@
+import 'dotenv/config'
 import { PrismaClient, Platform, MediaType, EventStatus } from '@prisma/client'
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaBetterSqlite3({ url: 'prisma/dev.db' })
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   console.log('Starting seed...')
