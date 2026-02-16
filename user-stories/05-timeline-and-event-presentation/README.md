@@ -35,4 +35,4 @@ This epic covers how events and their associated media are displayed:
 ## Story Naming Convention
 Files should be named: `05-[story-number]-[description].md`
 
-Example: `05-001-chronological-timeline-view.md`
+Example: `05-001-playable-ai-driven-event-timeline.md`
