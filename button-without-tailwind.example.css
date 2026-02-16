@@ -1,0 +1,79 @@
+/* 
+ * This file demonstrates what CSS would be needed to replace Tailwind 
+ * for just the Button component alone.
+ * 
+ * Current Tailwind: 1 line of utility classes
+ * Plain CSS equivalent: ~50 lines (shown below)
+ */
+
+.button {
+  /* Tailwind: px-6 py-3 */
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  
+  /* Tailwind: bg-blue-600 text-white */
+  background-color: #2563eb;
+  color: #ffffff;
+  
+  /* Tailwind: rounded-lg */
+  border-radius: 0.5rem;
+  
+  /* Tailwind: focus:outline-none */
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  
+  /* Tailwind: transition-colors */
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  
+  /* Basic button styles */
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Tailwind: hover:bg-blue-700 */
+.button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Tailwind: active:bg-blue-800 */
+.button:active {
+  background-color: #1e40af;
+}
+
+/* Tailwind: pressed:bg-blue-800 (React Aria specific) */
+.button[data-pressed] {
+  background-color: #1e40af;
+}
+
+/* Tailwind: focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 */
+.button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Tailwind: dark:focus:ring-offset-gray-900 */
+.dark .button:focus-visible {
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #111827;
+}
+
+/* Tailwind: disabled:opacity-50 disabled:cursor-not-allowed */
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 
+ * Note: This is ONLY for the Button component.
+ * The entire application uses ~50+ more utility combinations that would
+ * each need similar CSS definitions.
+ * 
+ * Total CSS needed to replace Tailwind: ~500-800 lines
+ * Total Tailwind classes used: ~50 utilities
+ */
