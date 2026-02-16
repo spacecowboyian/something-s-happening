@@ -33,6 +33,6 @@ This epic covers how events and their associated media are displayed:
 🔴 Critical - Core user experience of the platform
 
 ## Story Naming Convention
-Files should be named: `05-[story-number]-[description].md`
+Files should be named: `05-[story-number]-[description].md` and placed in the `frontend/` subdirectory.
 
-Example: `05-001-playable-ai-driven-event-timeline.md`
+Example: `frontend/05-001-playable-ai-driven-event-timeline.md`

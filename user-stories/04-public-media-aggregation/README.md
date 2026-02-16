@@ -38,6 +38,8 @@ This epic handles pulling in publicly available content from various platforms:
 
 ## User Stories
 
+All backend stories are located in the `backend/` subdirectory.
+
 ### Backend Infrastructure (MVP Critical)
 - **04-002**: Event Data Model and API Endpoints - Core API endpoints for event and media data
 - **04-003**: Media Storage and Retrieval System - Object storage and CDN for media files
@@ -51,9 +53,9 @@ This epic handles pulling in publicly available content from various platforms:
 - **04-005**: Data Scraping Service Architecture - Background job system for scraping
 
 ## Story Naming Convention
-Files should be named: `04-[story-number]-[description].md`
+Files should be named: `04-[story-number]-[description].md` and placed in the `backend/` subdirectory.
 
-Example: `04-001-social-media-integration.md`
+Example: `backend/04-001-social-media-integration.md`
 
 ## Implementation Order for MVP
 

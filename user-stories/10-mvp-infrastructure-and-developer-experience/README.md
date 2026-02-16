@@ -37,6 +37,8 @@ This epic focuses on developer productivity and infrastructure:
 
 ## User Stories
 
+All infrastructure stories are located in the `backend/` subdirectory.
+
 ### Infrastructure Setup (MVP Critical)
 - **10-001**: CI/CD Pipeline Setup - Automated testing and deployment
 - **10-002**: Environment Configuration and Deployment Setup - Environment management and deployment processes
@@ -45,6 +47,6 @@ This epic focuses on developer productivity and infrastructure:
 🔴 Critical - Enables efficient development of everything else
 
 ## Story Naming Convention
-Files should be named: `10-[story-number]-[description].md`
+Files should be named: `10-[story-number]-[description].md` and placed in the `backend/` subdirectory.
 
-Example: `10-001-ci-cd-pipeline-setup.md`
+Example: `backend/10-001-ci-cd-pipeline-setup.md`
