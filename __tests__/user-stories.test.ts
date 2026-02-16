@@ -42,7 +42,8 @@ describe('User Story Template Validation', () => {
     test('should have a title (H1)', () => {
       const titleMatch = content.match(/^# .+/m);
       expect(titleMatch).not.toBeNull();
-      expect(titleMatch![0].length).toBeGreaterThan(2); // More than just "# "
+      // Title should be meaningful (more than "# " plus at least 3 characters)
+      expect(titleMatch![0].length).toBeGreaterThan(5);
     });
 
     test.each(REQUIRED_SECTIONS)('should have section: %s', (section: string) => {
