@@ -5,14 +5,6 @@ import { mockEventData } from '@/lib/mockEventData';
 import styles from './page.module.css';
 
 export default function Home() {
-  const handleDocsClick = () => {
-    window.open('https://nextjs.org/docs', '_blank', 'noopener,noreferrer');
-  };
-
-  const handleAriaDocsClick = () => {
-    window.open('https://react-spectrum.adobe.com/react-aria/', '_blank', 'noopener,noreferrer');
-  };
-
   const handleEventClick = (eventId: string) => {
     window.location.assign(`/event/${eventId}`);
   };
@@ -36,12 +28,6 @@ export default function Home() {
               {eventData.title}
             </Button>
           ))}
-          <Button onPress={handleDocsClick} aria-label="Read the Next.js documentation (opens in new tab)">
-            Read the Docs
-          </Button>
-          <Button onPress={handleAriaDocsClick} aria-label="Read the React Aria documentation (opens in new tab)">
-            React Aria Docs
-          </Button>
         </div>
       </main>
     </div>
