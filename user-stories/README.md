@@ -42,8 +42,14 @@ user-stories/
 │   ├── README.md
 │   └── backend/
 │       └── [story-files].md
-└── 10-mvp-infrastructure-and-developer-experience/
+├── 10-mvp-infrastructure-and-developer-experience/
+│   ├── README.md
+│   └── backend/
+│       └── [story-files].md
+└── 11-user-feed-and-personalization/
     ├── README.md
+    ├── frontend/
+    │   └── [story-files].md
     └── backend/
         └── [story-files].md
 ```
@@ -81,6 +87,9 @@ Internal tooling for event health, aggregation monitoring, abuse handling, and s
 
 ### 10. MVP Infrastructure & Developer Experience
 Foundations for AI-driven development, preview environments per PR, automated checks, and agent-first workflows.
+
+### 11. User Feed & Personalization
+Personalized user feeds, event subscriptions, and content organization through channels. Enables users to curate their experience by subscribing to macro events and organizing content in custom channels with unified timeline display.
 
 ## User Story Format
 
