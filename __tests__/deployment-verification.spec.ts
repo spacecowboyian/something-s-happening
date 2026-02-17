@@ -46,11 +46,12 @@ test.describe('Deployment Verification', () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     
-    // Click on first event link
-    await page.click('a[href*="/event/test-event-123"]');
+    // Click on first event link and wait for navigation
+    const eventLink = page.locator('a[href*="/event/test-event-123"]').first();
+    await eventLink.click();
     
-    // Wait for navigation
-    await page.waitForLoadState('networkidle');
+    // Wait for navigation to complete
+    await page.waitForURL('**/event/**');
     
     // Verify we're on an event page
     expect(page.url()).toContain('/event/');
