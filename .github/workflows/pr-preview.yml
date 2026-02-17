@@ -85,10 +85,10 @@ jobs:
             const previewUrl = `https://${context.repo.owner}.github.io/${{ env.REPO_NAME }}/pr-${prNumber}/`;
             
             const commentBody = `🚀 Preview deployment ready!
-            
-            **Preview URL:** ${previewUrl}
-            
-            This preview will be automatically cleaned up when the PR is closed or merged.`;
+
+**Preview URL:** ${previewUrl}
+
+This preview will be automatically cleaned up when the PR is closed or merged.`;
             
             // Check if a comment already exists
             const { data: comments } = await github.rest.issues.listComments({
