@@ -130,7 +130,6 @@ function MomentCardImpl({
           <TooltipTrigger delay={0} closeDelay={0}>
             <span
               className={styles.timelineDotButton}
-              role="img"
               aria-label={markerTooltip}
               tabIndex={-1}
             >
