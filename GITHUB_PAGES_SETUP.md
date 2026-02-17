@@ -2,11 +2,20 @@
 
 This repository uses GitHub Pages to deploy both the main site and PR previews.
 
-## Configuration Required
+## ⚠️ CRITICAL: Manual Configuration Required
 
-**IMPORTANT**: GitHub Pages must be configured to serve from the `gh-pages` branch.
+**Before deployments will be accessible, you MUST manually enable GitHub Pages in the repository settings.**
 
-### How to Configure
+Without this configuration:
+- ✅ Deployments will succeed and files will be in the `gh-pages` branch
+- ❌ But the site will return 404 errors when accessed
+- ❌ PR previews will not be accessible
+
+### Required Configuration Steps
+
+### Required Configuration Steps
+
+**You must do this ONCE after the first workflow runs:**
 
 1. Go to your repository settings: `Settings` → `Pages`
 2. Under "Build and deployment":
@@ -33,6 +42,19 @@ Both workflows use `peaceiris/actions-gh-pages@v3` to deploy to the gh-pages bra
 - Main deployment uses `keep_files: true` to preserve PR preview directories
 - PR deployments use `destination_dir: pr-{number}` and `keep_files: true`
 - This allows main site at root and PR previews in subdirectories to coexist
+
+### Automated Deployment Verification
+
+After each PR deployment, an automated verification workflow runs that:
+1. Waits for GitHub Pages to publish the deployment
+2. Uses Playwright to test the deployed site
+3. Verifies that pages load correctly
+4. Posts a comment on the PR with verification results
+
+If verification fails, check:
+- GitHub Pages is enabled (see configuration above)
+- The site is not private (GitHub Pages requires a paid plan for private repos)
+- Wait a few minutes for GitHub Pages to publish after the first deployment
 
 ### Troubleshooting
 
