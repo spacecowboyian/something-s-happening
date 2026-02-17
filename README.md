@@ -36,6 +36,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `npm run test` - Run Jest tests
 - `npm run db:push` - Push Prisma schema to the database
 - `npm run db:seed` - Seed the database with sample data
+- `npm run test:youtube` - Test YouTube API integration
 
 ## Development Workflow
 

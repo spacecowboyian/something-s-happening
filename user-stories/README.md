@@ -7,16 +7,48 @@ This directory contains all user stories organized by epic. Each epic has its ow
 ```
 user-stories/
 ├── 01-user-entry-and-onboarding/
+│   ├── README.md
+│   └── frontend/
+│       └── [story-files].md
 ├── 02-event-resolution-and-context-detection/
+│   ├── README.md
+│   └── backend/
+│       └── [story-files].md
 ├── 03-event-creation-lightweight/
+│   ├── README.md
+│   └── frontend/
+│       └── [story-files].md
 ├── 04-public-media-aggregation/
+│   ├── README.md
+│   └── backend/
+│       └── [story-files].md
 ├── 05-timeline-and-event-presentation/
+│   ├── README.md
+│   └── frontend/
+│       └── [story-files].md
 ├── 06-event-discovery-and-navigation/
+│   ├── README.md
+│   └── frontend/
+│       └── [story-files].md
 ├── 07-moderation-and-trust-signals/
+│   ├── README.md
+│   └── frontend/
+│       └── [story-files].md
 ├── 08-privacy-permissions-and-content-lifecycle/
+│   ├── README.md
+│   └── backend/
+│       └── [story-files].md
 ├── 09-system-administration-and-governance/
+│   ├── README.md
+│   └── backend/
+│       └── [story-files].md
 └── 10-mvp-infrastructure-and-developer-experience/
+    ├── README.md
+    └── backend/
+        └── [story-files].md
 ```
+
+**Note**: Stories are organized into `frontend/` and `backend/` subdirectories within each epic folder. Epic-level documentation (README.md, summaries) remains at the epic root level.
 
 ## Epics Overview
 
@@ -118,10 +150,12 @@ To work on a specific user story with GitHub Copilot:
 
 1. Determine which epic the story belongs to
 2. Navigate to that epic's directory
-3. Create a new `.md` file following the naming convention
-4. Use the template format provided above
-5. Fill in all relevant sections
-6. Link any dependencies to other stories
+3. Determine if the story is primarily frontend or backend focused
+4. Create a new `.md` file in the appropriate subdirectory (`frontend/` or `backend/`)
+5. Follow the naming convention: `[epic-number]-[story-number]-[short-description].md`
+6. Use the template format provided above
+7. Fill in all relevant sections
+8. Link any dependencies to other stories
 
 ## Epic Prioritization
 

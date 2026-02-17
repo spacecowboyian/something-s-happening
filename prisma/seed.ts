@@ -27,7 +27,7 @@ async function main() {
 
   console.log('Created event:', event.slug)
 
-  // Create 5 sample source posts
+  // Create sample source posts including YouTube videos
   const samplePosts = [
     {
       platform: Platform.X,
@@ -55,12 +55,22 @@ async function main() {
     },
     {
       platform: Platform.YOUTUBE,
-      platformPostId: 'yt-video-1',
-      url: 'https://youtube.com/watch?v=abc123',
-      authorHandle: 'YouTuber123',
+      platformPostId: 'dQw4w9WgXcQ',
+      url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      authorHandle: 'Event Highlights',
       postedAt: new Date('2024-06-03T10:15:00Z'),
       mediaType: MediaType.VIDEO,
-      text: 'Sample YouTube video',
+      text: 'Live Performance Highlights - Main Stage',
+      eventId: event.id,
+    },
+    {
+      platform: Platform.YOUTUBE,
+      platformPostId: 'jNQXAC9IVRw',
+      url: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
+      authorHandle: 'City Events Official',
+      postedAt: new Date('2024-06-03T11:30:00Z'),
+      mediaType: MediaType.VIDEO,
+      text: 'Event Recap - Behind the Scenes',
       eventId: event.id,
     },
     {
@@ -98,10 +108,11 @@ async function main() {
       update: post,
       create: post,
     })
-    console.log(`Created post: ${post.platformPostId}`)
+    console.log(`Created post: ${post.platformPostId} (${post.platform})`)
   }
 
   console.log('Seed completed successfully!')
+  console.log(`\n✅ Created ${samplePosts.length} posts including ${samplePosts.filter(p => p.platform === Platform.YOUTUBE).length} YouTube videos`)
 }
 
 main()

@@ -9,8 +9,10 @@
     "lint": "eslint",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:youtube": "tsx scripts/test-youtube.ts",
     "db:push": "prisma db push",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "db:reset": "npx prisma migrate reset --force && npm run db:seed"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
