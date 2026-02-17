@@ -57,3 +57,6 @@ To be filled during implementation
 - Align media-player UX to standard web video player behavior: icon controls (play/pause, previous, next), progress bar tied to real media duration, and scrubbing support for video/audio.
 - Add keyboard shortcut support so pressing Space toggles play/pause, and keep mute always available with cyan speaker state when unmuted vs gray slashed-speaker state when muted.
 - Add arrow-key transport shortcuts (left/right for previous/next) and preserve selected playback mode semantics so click-selected moments can play as single-item while transport-started playback can continue sequentially.
+- Use images from posts as background slideshows during text moment playback, showing each image for 5 seconds.
+- Vary text moment playback duration based on the amount of text in each moment.
+- Display text moments like captions in a YouTube short: 2-3 words on screen at a time, separated by 0.5 seconds between word groups.

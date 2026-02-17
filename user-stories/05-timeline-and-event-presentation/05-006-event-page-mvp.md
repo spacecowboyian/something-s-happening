@@ -77,3 +77,12 @@ So that **I can quickly understand what's happening in an event without complex 
 - Drive the header time range from the first and last timeline posts so the displayed event window reflects actual ingested media timing.
 - Remove the live update strip from the header and present same-day event time as a true range from first-post time to last-post time.
 - Tighten event header vertical spacing to a fixed 12px top/bottom rhythm for a more compact stage layout.
+- Add example images to moments in the fake data (both single and multiple images per moment) to use as background slideshows during text moment playback, displaying each image for 5 seconds.
+- Vary text length in fake data moments to support dynamic text moment duration based on content length.
+- Display full text of every moment at the bottom of the player area in small font with an ellipsis that users can expand if needed.
+
+### 2026-02-17 — Mobile-Specific Features — Requested by: @spacecowboyian
+- Enable player autoplay from the first item on mobile (no autoplay on desktop).
+- Configure player to use portrait format on mobile to fit phone screens.
+- When user taps on a moment, return focus to the player.
+- Minimize event header on mobile to show just the title in a slim font that fits above the player, with a chevron icon button on the right to expand and show all event header info.
