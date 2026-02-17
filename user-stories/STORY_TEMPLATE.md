@@ -38,3 +38,7 @@ So that [benefit/reason].
 
 ## Testing Notes
 [Test cases and scenarios to validate]
+
+## Additions
+### YYYY-MM-DD — Requested by: @requester
+- [Single-entry summary of requested additions]

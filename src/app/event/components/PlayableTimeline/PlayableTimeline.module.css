@@ -1,0 +1,368 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background);
+}
+
+.stickyTopArea {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.playerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-cinematic-black);
+}
+
+.controlsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  padding: var(--spacing-sm) var(--spacing-xl);
+}
+
+.transportControls {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.controls {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.iconButton {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-cinematic-cyan);
+  cursor: pointer;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.iconButton :global(svg) {
+  width: 22px;
+  height: 22px;
+}
+
+.iconButton:hover {
+  color: var(--color-cinematic-cyan-bright);
+}
+
+.iconButton[data-focus-visible] {
+  outline: none;
+  color: var(--color-cinematic-cyan-bright);
+}
+
+.iconButton[data-disabled] {
+  color: var(--color-cinematic-control-disabled);
+  cursor: not-allowed;
+}
+
+.iconButtonActive {
+  color: var(--color-cinematic-cyan-bright);
+}
+
+.playerWindow {
+  min-height: clamp(180px, calc(100vh - 520px), 420px);
+  max-height: 46vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  justify-content: center;
+  padding: var(--spacing-xl);
+  background-color: var(--color-cinematic-stage);
+  border-top: 1px solid var(--color-cinematic-border);
+  border-bottom: 0;
+}
+
+.progressWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+}
+
+.progressBar {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.progressBar:focus {
+  outline: none;
+}
+
+.progressBar::-webkit-slider-runnable-track {
+  height: 10px;
+  background-color: var(--color-cinematic-cyan);
+  border: 0;
+  border-radius: 0;
+}
+
+.progressBar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 8px;
+  height: 18px;
+  margin-top: -4px;
+  background-color: var(--color-cinematic-cyan-bright);
+  border: 0;
+  border-radius: 0;
+}
+
+.progressBar::-moz-range-track {
+  height: 10px;
+  background-color: var(--color-cinematic-cyan);
+  border: 0;
+  border-radius: 0;
+}
+
+.progressBar::-moz-range-thumb {
+  width: 8px;
+  height: 18px;
+  background-color: var(--color-cinematic-cyan-bright);
+  border: 0;
+  border-radius: 0;
+}
+
+.progressBar::-moz-range-progress {
+  height: 10px;
+  background-color: var(--color-cinematic-cyan);
+  border: 0;
+  border-radius: 0;
+}
+
+.controlTime {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  color: var(--color-cinematic-muted);
+  font-family: var(--font-family-mono);
+  margin-left: var(--spacing-xs);
+}
+
+.playerMeta {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  color: var(--color-cinematic-muted);
+  font-family: var(--font-family-mono);
+  width: min(75%, 1200px);
+  max-width: 75%;
+  align-self: center;
+  text-align: left;
+}
+
+.playerSourceRow {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  width: min(75%, 1200px);
+  max-width: 75%;
+  align-self: center;
+  text-align: left;
+}
+
+.playerSource {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-inverse);
+  text-decoration: none;
+}
+
+.playerSource:hover {
+  text-decoration: underline;
+}
+
+.serviceIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid var(--color-cinematic-muted);
+  border-radius: var(--radius-full);
+  color: var(--color-cinematic-muted);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-mono);
+}
+
+.playerContent {
+  margin: 0;
+  font-size: clamp(1.9rem, 2.8vw, 3rem);
+  line-height: 1.18;
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-bold);
+  width: min(75%, 1200px);
+  max-width: 75%;
+  align-self: center;
+  text-align: left;
+}
+
+.youtubePlayer {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-cinematic-black);
+}
+
+.youtubePlayer :global(iframe) {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background-color: var(--color-cinematic-black);
+}
+
+.nativeMedia {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-cinematic-border);
+  background-color: var(--color-cinematic-black);
+}
+
+.audioPlayer {
+  width: 100%;
+}
+
+.playerLoading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  color: var(--color-cinematic-muted);
+  width: min(75%, 1200px);
+  max-width: 75%;
+  align-self: center;
+  text-align: left;
+}
+
+.loadingSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary-600);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.liveHint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  color: var(--color-accent-800);
+}
+
+.summarySection {
+  display: none;
+}
+
+.summaryTitle {
+  display: none;
+}
+
+.summaryText {
+  display: none;
+}
+
+.timelineSection {
+  padding-top: 0;
+  background-color: var(--color-background);
+}
+
+@media (max-width: 768px) {
+  .playerSection {
+    padding: 0;
+  }
+
+  .controlsRow,
+  .progressWrap {
+    padding: 0;
+  }
+
+  .controlsRow {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .transportControls,
+  .controls {
+    gap: var(--spacing-sm);
+  }
+
+  .controlTime {
+    font-size: var(--font-size-xs);
+    margin-left: 0;
+  }
+
+  .playerContent {
+    font-size: clamp(1.3rem, 7vw, 1.9rem);
+    line-height: 1.2;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .playerSourceRow,
+  .playerMeta,
+  .playerLoading {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .playerWindow {
+    min-height: clamp(150px, calc(100vh - 470px), 260px);
+    max-height: 36vh;
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-height: 860px) {
+  .playerWindow {
+    min-height: clamp(150px, calc(100vh - 460px), 300px);
+    max-height: 38vh;
+    padding: var(--spacing-md) var(--spacing-xl);
+  }
+
+  .progressWrap,
+  .controlsRow {
+    gap: var(--spacing-sm);
+  }
+}

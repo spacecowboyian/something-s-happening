@@ -28,6 +28,10 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `npm run lint` - Run ESLint to check code quality
 - `npm run test` - Run Jest tests
 
+## Development Workflow
+
+- For UI updates, validate in-browser behavior on the affected route(s), not only lint/tests.
+- Recommended sequence: `npm run lint` → `npm run test` → `npm run dev` and verify in browser.
 ## Deployment
 
 This application is automatically deployed to GitHub Pages on every push to the `main` branch. See [DEPLOYMENT.md](./DEPLOYMENT.md) for more details.

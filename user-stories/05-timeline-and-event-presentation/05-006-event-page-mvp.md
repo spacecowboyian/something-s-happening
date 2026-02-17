@@ -1,0 +1,79 @@
+# Event Page MVP
+
+## Status
+- [ ] Not Started
+- [x] In Progress
+- [ ] Completed
+
+## User Story
+As a **user viewing an event**,
+I want **to see a simple event page with a timeline of media items**,
+So that **I can quickly understand what's happening in an event without complex features**.
+
+## Acceptance Criteria
+- [ ] Event page accessible at `/event/[id]` route
+- [ ] Event header displays event title and basic information
+- [ ] Timeline displays media items in a clean, vertical layout
+- [ ] Each timeline item shows timestamp, source, and content preview
+- [ ] Components use React Aria for accessibility
+- [ ] All styling uses global CSS variables from design system
+- [ ] Components are reusable and styled with CSS modules
+- [ ] Page is responsive and works on mobile and desktop
+- [ ] UI follows the established design patterns from the Button component
+
+## Technical Notes
+- This is a stripped-down version of story 05-001 focusing only on UI
+- Uses Next.js App Router with dynamic routes
+- Components built with react-aria-components
+- Styling uses CSS modules with CSS custom properties
+- No backend integration needed for MVP - uses mock data
+- Components should be placed in `/src/components` with their CSS modules
+- Route should be in `/src/app/event/[event-id]/page.tsx`
+
+## Dependencies
+- Existing Button component pattern
+- Global CSS design tokens in globals.css
+- React Aria Components library
+- Next.js App Router
+
+## Priority
+- [x] Critical (MVP)
+- [ ] High
+- [ ] Medium
+- [ ] Low
+
+## Estimated Complexity
+- [x] Small (1-2 days)
+- [ ] Medium (3-5 days)
+- [ ] Large (1-2 weeks)
+- [ ] X-Large (2+ weeks)
+
+## Implementation Details
+### Components Created
+1. **EventHeader** - Displays event title, date, and status
+2. **Timeline** - Container for timeline items
+3. **EventCard** - Individual timeline item with media preview
+
+### Route Structure
+- `/src/app/event/[id]/page.tsx` - Dynamic event page
+
+### Styling Approach
+- Each component has its own `.module.css` file
+- All values use CSS custom properties from globals.css
+- Follows the pattern established by Button.module.css
+- Supports light/dark themes automatically
+
+## Testing Notes
+- Verify route renders at `/event/test-event-123`
+- Check all CSS variables are used correctly
+- Verify responsive behavior on different screen sizes
+- Test dark mode support
+- Verify accessibility with keyboard navigation
+
+## Additions
+### 2026-02-17 — Requested by: @spacecowboyian
+- Make the top event area (from title through media player) sticky during scroll, offset timeline content so it remains visible below the sticky region, make each entire timeline moment card clickable to play/select with active highlight and auto-scroll beneath player position, and use thumbnail-only rendering for YouTube moments in timeline cards (full playback only in the main media player).
+- Display all event and timeline times in the viewer's local 12-hour format without timezone labels, and show same-day header ranges as one date followed by a time window.
+- Drive the header time range from the first and last timeline posts so the displayed event window reflects actual ingested media timing.
+- Remove the live update strip from the header and present same-day event time as a true range from first-post time to last-post time.
+- Tighten event header vertical spacing to a fixed 12px top/bottom rhythm for a more compact stage layout.

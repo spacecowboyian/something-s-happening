@@ -127,5 +127,18 @@ describe('User Story Template Validation', () => {
       expect(checkedBoxes).not.toBeNull();
       expect(checkedBoxes!.length).toBe(1);
     });
+
+    test('should validate Additions format when section exists', () => {
+      if (!content.includes('## Additions')) {
+        return;
+      }
+
+      const additionsSection = content.match(/## Additions[\s\S]*?(?=\n## [^\n]+|$)/);
+      expect(additionsSection).not.toBeNull();
+
+      const additionsText = additionsSection![0];
+      expect(additionsText).toMatch(/### \d{4}-\d{2}-\d{2} — Requested by: .+/);
+      expect(additionsText).toMatch(/- .+/);
+    });
   });
 });
