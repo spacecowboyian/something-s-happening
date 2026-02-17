@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
 
+const isProd = process.env.NODE_ENV === 'production';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '/something-s-happening';
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'export',
+  basePath: isProd ? basePath : '',
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;

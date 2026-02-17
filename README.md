@@ -2,6 +2,8 @@
 
 A Next.js React application built with TypeScript, React Aria, and a custom CSS design system.
 
+🚀 **Live Demo**: [https://spacecowboyian.github.io/something-s-happening/](https://spacecowboyian.github.io/something-s-happening/)
+
 ## Getting Started
 
 First, install the dependencies:
@@ -21,10 +23,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Available Scripts
 
 - `npm run dev` - Start the development server
-- `npm run build` - Build the production application
+- `npm run build` - Build the production application (static export for GitHub Pages)
 - `npm run start` - Start the production server
 - `npm run lint` - Run ESLint to check code quality
 - `npm run test` - Run Jest tests
+
+## Deployment
+
+This application is automatically deployed to GitHub Pages on every push to the `main` branch. See [DEPLOYMENT.md](./DEPLOYMENT.md) for more details.
 
 ## Tech Stack
 
