@@ -12,6 +12,13 @@ First, install the dependencies:
 npm install
 ```
 
+Then, set up the database:
+
+```bash
+npm run db:push
+npm run db:seed
+```
+
 Then, run the development server:
 
 ```bash
@@ -27,11 +34,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `npm run start` - Start the production server
 - `npm run lint` - Run ESLint to check code quality
 - `npm run test` - Run Jest tests
+- `npm run db:push` - Push Prisma schema to the database
+- `npm run db:seed` - Seed the database with sample data
 
 ## Development Workflow
 
 - For UI updates, validate in-browser behavior on the affected route(s), not only lint/tests.
 - Recommended sequence: `npm run lint` → `npm run test` → `npm run dev` and verify in browser.
+
 ## Deployment
 
 This application is automatically deployed to GitHub Pages on every push to the `main` branch. See [DEPLOYMENT.md](./DEPLOYMENT.md) for more details.
@@ -44,8 +54,19 @@ This application is automatically deployed to GitHub Pages on every push to the 
 - **React Aria Components** - Accessible UI component library
 - **CSS Modules** - Component-scoped styling
 - **CSS Custom Properties** - Design tokens for theming
+- **Prisma** - Database ORM with SQLite
 - **ESLint** - Code linting
 - **Jest** - Testing framework
+
+## Database
+
+This project uses Prisma with SQLite for local development. The database schema includes:
+
+- **Event** - Core event entity with geofencing and time bounds
+- **SourcePost** - Social media posts from various platforms (X, Bluesky, YouTube, etc.)
+- **IngestRun** - Ingestion job tracking with metrics
+
+See `prisma/schema.prisma` for the full schema definition.
 
 ## Design System
 
@@ -201,4 +222,3 @@ React Aria provides accessible behavior through data attributes. Use these in yo
 - `[data-selected]` - Element is selected (for lists, etc.)
 
 See the [React Aria documentation](https://react-spectrum.adobe.com/react-aria/) for more details on component patterns and accessibility features.
-
