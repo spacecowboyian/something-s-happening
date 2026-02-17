@@ -1,0 +1,165 @@
+/**
+ * EventHeader Component Styles
+ * Uses CSS custom properties for theme support
+ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: 12px var(--spacing-xl);
+  background-image: linear-gradient(
+    120deg,
+    var(--color-cinematic-grad-start) 0%,
+    var(--color-cinematic-grad-mid) 52%,
+    var(--color-cinematic-grad-end) 100%
+  );
+  border-bottom: 1px solid var(--color-cinematic-border);
+}
+
+.mainRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+}
+
+.leftBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.rightBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-xs);
+  flex-shrink: 0;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-radius: var(--radius-full);
+  background-color: rgba(255, 255, 255, 0.14);
+  color: var(--color-text-inverse);
+}
+
+.statusBadge.live {
+  background-color: var(--color-error-100);
+  color: var(--color-error-700);
+}
+
+.statusBadge.upcoming {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.statusBadge.completed {
+  background-color: rgba(255, 255, 255, 0.14);
+  color: var(--color-text-inverse);
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-2xl);
+  color: var(--color-text-inverse);
+  margin: 0;
+}
+
+.dateInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.date {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  color: var(--color-text-inverse);
+}
+
+.dateSeparator {
+  color: var(--color-text-inverse);
+}
+
+.description {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-md);
+  color: var(--color-text-inverse);
+  max-width: 720px;
+  margin: 0;
+  opacity: 0.92;
+}
+
+.liveUpdateBar {
+  width: calc(100% + (var(--spacing-xl) * 2));
+  margin-left: calc(var(--spacing-xl) * -1);
+  margin-right: calc(var(--spacing-xl) * -1);
+  background-color: var(--color-cinematic-live-bg);
+  border-top: 1px solid var(--color-cinematic-border);
+  padding: var(--spacing-sm) var(--spacing-xl);
+}
+
+.liveUpdate {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-md);
+  color: var(--color-cinematic-live-text);
+  font-weight: var(--font-weight-medium);
+  max-width: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px var(--spacing-md);
+  }
+
+  .mainRow {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .rightBlock {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .dateInfo {
+    justify-content: flex-start;
+  }
+  
+  .title {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-xl);
+  }
+
+  .liveUpdateBar {
+    width: calc(100% + (var(--spacing-md) * 2));
+    margin-left: calc(var(--spacing-md) * -1);
+    margin-right: calc(var(--spacing-md) * -1);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .dateInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .dateSeparator {
+    display: none;
+  }
+}

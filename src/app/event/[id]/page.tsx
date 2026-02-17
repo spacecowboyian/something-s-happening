@@ -1,6 +1,4 @@
-import { EventHeader } from '@/components/EventHeader';
-import { Timeline } from '@/components/Timeline';
-import { EventCard } from '@/components/EventCard';
+import { PlayableTimeline } from '../components/PlayableTimeline';
 import styles from './page.module.css';
 
 // Mock data for the MVP - will be replaced with real data later
@@ -8,13 +6,13 @@ const mockEventData = {
   'test-event-123': {
     title: 'Tech Conference 2026',
     startDate: new Date('2026-02-16T09:00:00'),
-    endDate: new Date('2026-02-16T18:00:00'),
+    endDate: new Date('2026-02-16T16:12:00'),
     status: 'live' as const,
     description: 'Annual technology conference featuring the latest innovations in AI, cloud computing, and web development.',
     items: [
       {
         id: '1',
-        timestamp: new Date('2026-02-16T09:15:00'),
+        timestamp: new Date('2026-02-16T09:03:00'),
         source: '@techconference',
         sourceUrl: 'https://twitter.com/techconference',
         content: 'Opening keynote starting now! CEO announces exciting new product launches for 2026.',
@@ -22,23 +20,41 @@ const mockEventData = {
       },
       {
         id: '2',
-        timestamp: new Date('2026-02-16T10:30:00'),
+        timestamp: new Date('2026-02-16T09:41:00'),
         source: '@attendee_jane',
         sourceUrl: 'https://twitter.com/attendee_jane',
         content: 'Amazing demo of the new AI-powered development tools. This is going to change everything!',
         mediaType: 'text' as const,
       },
       {
+        id: '2b',
+        timestamp: new Date('2026-02-16T10:27:00'),
+        source: '@conference_video',
+        sourceUrl: 'https://youtube.com',
+        content: 'Short floor clip from the expo hall.',
+        mediaType: 'video' as const,
+        mediaUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
+      },
+      {
         id: '3',
-        timestamp: new Date('2026-02-16T11:45:00'),
+        timestamp: new Date('2026-02-16T11:56:00'),
         source: '@techblog',
         sourceUrl: 'https://twitter.com/techblog',
         content: 'Panel discussion on the future of web frameworks. Experts from React, Vue, and Angular teams sharing insights.',
         mediaType: 'text' as const,
       },
       {
+        id: '3b',
+        timestamp: new Date('2026-02-16T12:38:00'),
+        source: '@event_audio',
+        sourceUrl: 'https://example.com/audio',
+        content: 'Audio highlight from the keynote recap.',
+        mediaType: 'audio' as const,
+        mediaUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      },
+      {
         id: '4',
-        timestamp: new Date('2026-02-16T13:00:00'),
+        timestamp: new Date('2026-02-16T13:22:00'),
         source: '@livestream',
         sourceUrl: 'https://twitter.com/livestream',
         content: 'Lunch break. Networking session in the main hall. Great conversations happening!',
@@ -46,11 +62,38 @@ const mockEventData = {
       },
       {
         id: '5',
-        timestamp: new Date('2026-02-16T14:30:00'),
+        timestamp: new Date('2026-02-16T14:47:00'),
         source: '@devnews',
         sourceUrl: 'https://twitter.com/devnews',
         content: 'Workshop on modern CSS techniques. Learning about container queries and CSS layers.',
         mediaType: 'text' as const,
+      },
+    ],
+    pendingLiveItems: [
+      {
+        id: '6',
+        timestamp: new Date('2026-02-16T15:31:00'),
+        source: '@conferencehall',
+        sourceUrl: 'https://twitter.com/conferencehall',
+        content: 'Lightning talks are live now with rapid demos from startup founders.',
+        mediaType: 'text' as const,
+      },
+      {
+        id: '7',
+        timestamp: new Date('2026-02-16T15:54:00'),
+        source: '@devcommunity',
+        sourceUrl: 'https://twitter.com/devcommunity',
+        content: 'Crowd Q&A is underway and panelists are answering architecture questions in real time.',
+        mediaType: 'text' as const,
+      },
+      {
+        id: '8',
+        timestamp: new Date('2026-02-16T16:08:00'),
+        source: '@conference_video',
+        sourceUrl: 'https://youtube.com',
+        content: 'Another short clip showing live audience reactions.',
+        mediaType: 'video' as const,
+        mediaUrl: 'https://www.youtube.com/watch?v=BaW_jenozKc',
       },
     ],
   },
@@ -86,15 +129,16 @@ const mockEventData = {
         mediaType: 'text' as const,
       },
     ],
+    pendingLiveItems: [],
   },
 };
 
 export default async function EventPage({
   params,
 }: {
-  params: Promise<{ 'event-id': string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { 'event-id': eventId } = await params;
+  const { id: eventId } = await params;
   const eventData = mockEventData[eventId as keyof typeof mockEventData];
 
   if (!eventData) {
@@ -112,26 +156,15 @@ export default async function EventPage({
 
   return (
     <div className={styles.pageContainer}>
-      <EventHeader
+      <PlayableTimeline
         title={eventData.title}
         startDate={eventData.startDate}
         endDate={eventData.endDate}
-        status={eventData.status}
+        initialStatus={eventData.status}
         description={eventData.description}
+        initialItems={eventData.items}
+        pendingLiveItems={eventData.pendingLiveItems}
       />
-      
-      <Timeline>
-        {eventData.items.map((item) => (
-          <EventCard
-            key={item.id}
-            timestamp={item.timestamp}
-            source={item.source}
-            sourceUrl={item.sourceUrl}
-            content={item.content}
-            mediaType={item.mediaType}
-          />
-        ))}
-      </Timeline>
     </div>
   );
 }

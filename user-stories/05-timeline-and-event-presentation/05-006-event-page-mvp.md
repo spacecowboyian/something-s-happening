@@ -69,3 +69,11 @@ So that **I can quickly understand what's happening in an event without complex 
 - Verify responsive behavior on different screen sizes
 - Test dark mode support
 - Verify accessibility with keyboard navigation
+
+## Additions
+### 2026-02-17 — Requested by: @spacecowboyian
+- Make the top event area (from title through media player) sticky during scroll, offset timeline content so it remains visible below the sticky region, make each entire timeline moment card clickable to play/select with active highlight and auto-scroll beneath player position, and use thumbnail-only rendering for YouTube moments in timeline cards (full playback only in the main media player).
+- Display all event and timeline times in the viewer's local 12-hour format without timezone labels, and show same-day header ranges as one date followed by a time window.
+- Drive the header time range from the first and last timeline posts so the displayed event window reflects actual ingested media timing.
+- Remove the live update strip from the header and present same-day event time as a true range from first-post time to last-post time.
+- Tighten event header vertical spacing to a fixed 12px top/bottom rhythm for a more compact stage layout.

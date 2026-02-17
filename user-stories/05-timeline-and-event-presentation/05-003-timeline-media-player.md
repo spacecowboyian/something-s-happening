@@ -51,3 +51,9 @@ To be filled during implementation
 - Test large queue sizes
 - Test memory leaks during long playback sessions
 - Test behavior when media fails to load
+
+## Additions
+### 2026-02-17 — Requested by: @spacecowboyian
+- Align media-player UX to standard web video player behavior: icon controls (play/pause, previous, next), progress bar tied to real media duration, and scrubbing support for video/audio.
+- Add keyboard shortcut support so pressing Space toggles play/pause, and keep mute always available with cyan speaker state when unmuted vs gray slashed-speaker state when muted.
+- Add arrow-key transport shortcuts (left/right for previous/next) and preserve selected playback mode semantics so click-selected moments can play as single-item while transport-started playback can continue sequentially.

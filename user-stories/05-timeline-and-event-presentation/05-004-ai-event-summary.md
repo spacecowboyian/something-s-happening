@@ -51,3 +51,7 @@ To be filled during implementation
 - Test live summary refresh behavior
 - Test large event with high media volume
 - Evaluate hallucination risk
+
+## Additions
+### 2026-02-17 — Requested by: @spacecowboyian
+- Render AI summary directly above the media player without a surrounding container and without a heading, while keeping it inside the sticky top playback area.
