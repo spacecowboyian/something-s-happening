@@ -4,6 +4,26 @@ A Next.js React application built with TypeScript, React Aria, and a custom CSS 
 
 🚀 **Live Demo**: [https://spacecowboyian.github.io/something-s-happening/](https://spacecowboyian.github.io/something-s-happening/)
 
+## ⚠️ GitHub Pages Configuration Required
+
+**If the live demo link above shows 404**, GitHub Pages needs to be configured:
+
+1. Go to [Settings → Pages](https://github.com/spacecowboyian/something-s-happening/settings/pages)
+2. Set Source: `Deploy from a branch`
+3. Set Branch: `gh-pages`, Directory: `/`
+4. Click Save
+5. Wait 2-5 minutes
+
+**Or run the automated workflow:**
+- Go to Actions → "Enable GitHub Pages" → Run workflow → Type "enable" → Run
+
+**Diagnostic tool:**
+```bash
+npm run check:pages
+```
+
+See [PRIVATE_REPO_SOLUTION.md](./PRIVATE_REPO_SOLUTION.md) for details.
+
 ## Getting Started
 
 First, install the dependencies:
