@@ -1,30 +1,40 @@
+'use client';
+
+import { Button } from '@/components/Button';
+import styles from './page.module.css';
+
 export default function Home() {
+  const handleDocsClick = () => {
+    window.open('https://nextjs.org/docs', '_blank', 'noopener,noreferrer');
+  };
+
+  const handleAriaDocsClick = () => {
+    window.open('https://react-spectrum.adobe.com/react-aria/', '_blank', 'noopener,noreferrer');
+  };
+
+  const handleEventClick = () => {
+    window.location.href = '/event/test-event-123';
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <main className="flex flex-col items-center gap-8 p-8 text-center">
-        <h1 className="text-5xl font-bold text-gray-900 dark:text-white">
+    <div className={styles.pageContainer}>
+      <main className={styles.main}>
+        <h1 className={styles.title}>
           Something&apos;s Happening
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl">
-          Welcome to your Next.js React application. This project is ready for development!
+        <p className={styles.description}>
+          Welcome to your Next.js React application. This project is ready for development with react-aria and a custom design system!
         </p>
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <a
-            href="https://nextjs.org/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
+        <div className={styles.buttonGroup}>
+          <Button onPress={handleEventClick} aria-label="View sample event timeline">
+            View Event Timeline
+          </Button>
+          <Button onPress={handleDocsClick} aria-label="Read the Next.js documentation (opens in new tab)">
             Read the Docs
-          </a>
-          <a
-            href="https://github.com/vercel/next.js"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
-          >
-            View on GitHub
-          </a>
+          </Button>
+          <Button onPress={handleAriaDocsClick} aria-label="Read the React Aria documentation (opens in new tab)">
+            React Aria Docs
+          </Button>
         </div>
       </main>
     </div>
