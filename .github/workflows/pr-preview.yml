@@ -10,6 +10,9 @@ permissions:
   contents: write
   pull-requests: write
 
+env:
+  REPO_NAME: something-s-happening
+
 jobs:
   deploy:
     if: github.event.action != 'closed'
@@ -61,7 +64,7 @@ jobs:
 
       - name: Build with Next.js
         env:
-          NEXT_PUBLIC_BASE_PATH: /something-s-happening/pr-${{ github.event.pull_request.number }}
+          NEXT_PUBLIC_BASE_PATH: /${{ env.REPO_NAME }}/pr-${{ github.event.pull_request.number }}
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
 
       - name: Deploy to GitHub Pages
@@ -77,9 +80,9 @@ jobs:
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
-            const previewUrl = `https://spacecowboyian.github.io/something-s-happening/pr-${prNumber}/`;
+            const previewUrl = `https://spacecowboyian.github.io/${{ env.REPO_NAME }}/pr-${prNumber}/`;
             
-            const comment = `🚀 Preview deployment ready!
+            const commentBody = `🚀 Preview deployment ready!
             
             **Preview URL:** ${previewUrl}
             
@@ -92,9 +95,9 @@ jobs:
               issue_number: prNumber
             });
             
-            const botComment = comments.find(comment => 
-              comment.user.type === 'Bot' && 
-              comment.body.includes('Preview deployment ready!')
+            const botComment = comments.find(c => 
+              c.user.type === 'Bot' && 
+              c.body.includes('Preview deployment ready!')
             );
             
             if (botComment) {
@@ -103,7 +106,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: botComment.id,
-                body: comment
+                body: commentBody
               });
             } else {
               // Create new comment
@@ -111,30 +114,22 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                body: comment
+                body: commentBody
               });
             }
 
   cleanup:
-    if: github.event.action == 'closed'
+    # Security: Only run cleanup for PRs from the same repository (not forks)
+    # This prevents malicious actors from executing code with write permissions
+    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
-      # Security: Only allow cleanup for PRs from the same repository
-      # This prevents malicious actors from forks executing code with write permissions
-      - name: Check PR source
-        if: github.event.pull_request.head.repo.full_name != github.repository
-        run: |
-          echo "PR is from a fork. Skipping cleanup for security reasons."
-          exit 0
-
       - name: Checkout gh-pages branch
-        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/checkout@v4
         with:
           ref: gh-pages
 
       - name: Remove preview directory
-        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           PR_DIR="pr-${{ github.event.pull_request.number }}"
           if [ -d "$PR_DIR" ]; then
