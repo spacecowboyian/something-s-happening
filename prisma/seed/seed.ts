@@ -69,6 +69,17 @@ async function main() {
               author: '@musicfan',
               timestamp: new Date(now.getTime() - 30 * 60 * 1000),
             },
+            {
+              type: 'video',
+              source: 'youtube',
+              sourceId: 'dQw4w9WgXcQ',
+              url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+              thumbnailUrl: 'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
+              title: 'Live Performance - Main Stage',
+              description: 'Amazing performance at the summer festival',
+              author: 'Festival Live Stream',
+              timestamp: new Date(twoHoursAgo.getTime() + 45 * 60 * 1000),
+            },
           ],
         },
       },
@@ -147,6 +158,17 @@ async function main() {
               author: '@citymarathon',
               timestamp: new Date(now.getTime() - 60 * 60 * 1000),
             },
+            {
+              type: 'video',
+              source: 'youtube',
+              sourceId: 'jNQXAC9IVRw',
+              url: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
+              thumbnailUrl: 'https://img.youtube.com/vi/jNQXAC9IVRw/mqdefault.jpg',
+              title: 'Marathon Highlights - Brooklyn Bridge Start',
+              description: 'Watch the incredible start of the 2026 City Marathon',
+              author: 'City Marathon Official',
+              timestamp: new Date(now.getTime() - 2.5 * 60 * 60 * 1000),
+            },
           ],
         },
       },
@@ -156,9 +178,11 @@ async function main() {
     console.log(`Created ${await prisma.event.count()} events`);
     console.log(`Created ${await prisma.media.count()} media items`);
     console.log('\nEvents:');
-    console.log(`- ${concertEvent.title} (${concertEvent.status})`);
+    console.log(`- ${concertEvent.title} (${concertEvent.status}) - includes YouTube video`);
     console.log(`- ${sportsEvent.title} (${sportsEvent.status})`);
-    console.log(`- ${marathonEvent.title} (${marathonEvent.status})`);
+    console.log(`- ${marathonEvent.title} (${marathonEvent.status}) - includes YouTube video`);
+    console.log('\n💡 Tip: YouTube videos are now supported!');
+    console.log('   Run "npm run test:youtube" to test YouTube API integration');
   } catch (error) {
     console.error('Detailed error:', error);
     throw error;

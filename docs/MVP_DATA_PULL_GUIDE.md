@@ -5,24 +5,31 @@ This document outlines the MVP data pull strategy for "Something's Happening", i
 
 ## Best Services to Start With
 
-### 1. Mock Data ✅ (Implemented - Currently Debugging)
+### 1. Mock Data ✅ (Implemented)
 - **Why**: Enables immediate frontend development
 - **Status**: Database schema created, seed script ready
-- **What We Have**: 3 sample events with 8 media items using Picsum images
+- **What We Have**: 3 sample events with 10 media items (includes YouTube videos!)
 
-### 2. Reddit API 📋 (Recommended Next)
+### 2. YouTube API 📹 (NEW - Implemented!)
+- **Why**: Rich video content for events
+- **Cost**: FREE (10,000 units/day)
+- **What You Need**: Free API key from Google Cloud Console
+- **Rate Limits**: 100 searches/day (free tier)
+- **See**: `docs/YOUTUBE_QUICK_START.md`
+
+### 3. Reddit API 📋 (Recommended Next)
 - **Why**: No OAuth, free, good public content
 - **Rate Limits**: 60 requests/minute
 - **What You Need**: Just HTTP requests, no API key
 - **Cost**: $0
 
-### 3. Unsplash API 📋 (For Supplemental Images)  
+### 4. Unsplash API 📋 (For Supplemental Images)  
 - **Why**: High-quality stock photos
 - **Rate Limits**: 50 requests/hour (free tier)
 - **What You Need**: Free API key from unsplash.com/developers
 - **Cost**: $0
 
-### 4. Twitter API ⏳ (Future - If Budget Allows)
+### 5. Twitter API ⏳ (Future - If Budget Allows)
 - **Why**: Best for real-time events
 - **Cost**: $100/month for Basic tier (includes location search)
 - **Alternative**: Free tier (no location search)
@@ -71,16 +78,21 @@ This document outlines the MVP data pull strategy for "Something's Happening", i
 ## Recommended MVP Stack
 
 **Start with (Total Cost: $0)**:
-1. Mock data (immediate development)
-2. Reddit API (real public content)
-3. Unsplash API (supplemental images)
+1. Mock data (immediate development) ✅
+2. **YouTube API** (rich video content) 🆕
+3. Reddit API (real public content)
+4. Unsplash API (supplemental images)
 
 Hold on Twitter until MVP is validated ($100/month).
 
 ## Files Created
 - `/prisma/schema.prisma` - Database schema
-- `/prisma/seed/seed.ts` - Mock data generator  
+- `/prisma/seed/seed.ts` - Mock data generator (now with YouTube!)
 - `/src/lib/prisma.ts` - Database client
+- `/src/lib/youtube.ts` - YouTube API utilities 🆕
+- `/scripts/test-youtube.ts` - YouTube test script 🆕
 - `/docs/MVP_DATA_PULL_GUIDE.md` - This guide
+- `/docs/YOUTUBE_API_GUIDE.md` - YouTube integration guide 🆕
+- `/docs/YOUTUBE_QUICK_START.md` - Quick start guide 🆕
 
 See full implementation details in the complete guide.
