@@ -634,7 +634,7 @@ export function PlayableTimeline({
   }, []);
 
   const stickyAreaRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const itemRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const orderedItems = useMemo(() => {
     const copy = [...items];
@@ -695,7 +695,7 @@ export function PlayableTimeline({
   const headerStartDate = chronologicalItems[0]?.timestamp ?? startDate;
   const headerEndDate = chronologicalItems[chronologicalItems.length - 1]?.timestamp ?? endDate;
 
-  const setItemRef = useCallback((itemId: string, node: HTMLDivElement | null) => {
+  const setItemRef = useCallback((itemId: string, node: HTMLElement | null) => {
     itemRefs.current[itemId] = node;
   }, []);
 
