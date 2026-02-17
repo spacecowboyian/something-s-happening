@@ -77,7 +77,7 @@ function MomentCardImpl({
   extendTopConnector = false,
   extendBottomConnector = false,
   onPress,
-}: MomentCardProps, ref: ForwardedRef<HTMLDivElement>) {
+}: MomentCardProps, ref: ForwardedRef<HTMLButtonElement>) {
   const formatTimelineTimestamp = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
       hour: 'numeric',
