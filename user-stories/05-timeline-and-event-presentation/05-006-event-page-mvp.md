@@ -5,10 +5,13 @@
 - [x] In Progress
 - [ ] Completed
 
+## Vision & Context
+In a world drowning in algorithmic feeds and manufactured content, real events happening in real time are losing visibility. This feature aims to make real-world moments as engaging and accessible as short-form content platforms like YouTube Shorts, but grounded in reality. When someone shares a link to an event, recipients should be able to immediately hop in and start consuming moments—no friction, no complexity. This isn't about entertainment for entertainment's sake; it's about keeping humans connected to the world around them and to each other through what actually matters.
+
 ## User Story
-As a **user viewing an event**,
-I want **to see a simple event page with a timeline of media items**,
-So that **I can quickly understand what's happening in an event without complex features**.
+As a **user receiving a link to an event**,
+I want **to instantly start watching/reading moments in a familiar, engaging short-form content experience**,
+So that **I can stay connected to real-world events that matter without the friction of complex interfaces**.
 
 ## Acceptance Criteria
 - [ ] Event page accessible at `/event/[id]` route

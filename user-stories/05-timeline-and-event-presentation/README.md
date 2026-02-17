@@ -1,5 +1,10 @@
 # Epic 5: Timeline & Event Presentation
 
+## Vision
+In an age where algorithms curate our reality and manufactured content dominates our attention, real-world events are losing their place in our collective consciousness. This epic is about reclaiming that space—making real events as engaging, accessible, and effortless to consume as any short-form content platform. When someone gets a link to an event, they should be able to hop right in and start watching/reading moments that matter, experiencing reality with the same frictionless immersion they'd get from YouTube Shorts or TikTok, but grounded in things that actually happened to people who actually exist.
+
+We're not just building another news feed or timeline. We're creating a bridge between the addictive UX patterns of modern content platforms and the fundamental human need to stay connected to the real world and each other.
+
 ## Overview
 Displaying aggregated media in a chronological, evidence-first timeline (live vs archived behavior).
 

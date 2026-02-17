@@ -5,10 +5,15 @@
 - [ ] In Progress
 - [ ] Completed
 
+## Vision & Context
+The power of short-form content platforms lies in their frictionless consumption: tap play and immerse yourself in a continuous stream. We're bringing that same immediacy and engagement to real-world events. Each moment—whether video, image, or text—should flow naturally into the next, creating an experience as compelling as scrolling through Shorts, but about events that actually happened and people who actually exist. This is about reclaiming attention for reality, making it as easy to stay informed about the world as it is to get lost in algorithmic content.
+
+Future potential includes generating audio from text-only moments to create a fully immersive experience, but the core mission remains: make real life matter.
+
 ## User Story
-As a **user**,
-I want **to press play and automatically move through event media sequentially**,
-So that **I can experience the event like a continuous stream or show**.
+As a **user consuming event content**,
+I want **to experience moments sequentially in an engaging, short-form content style**,
+So that **staying connected to real-world events is as effortless and compelling as consuming any other media**.
 
 ## Acceptance Criteria
 - [ ] Media player displays current item
@@ -31,6 +36,7 @@ So that **I can experience the event like a continuous stream or show**.
 - Queue must dynamically update when new items are ingested
 - Text rendering requires caption animation engine with word-grouping logic
 - Background slideshow requires image preloading and transition management
+- **Future Enhancement**: Consider audio generation from text-only moments to create fully immersive multimedia experiences, depending on traffic levels and cost feasibility
 
 ## Dependencies
 - Media rendering layer
