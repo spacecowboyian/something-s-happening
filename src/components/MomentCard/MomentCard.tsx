@@ -9,6 +9,7 @@ import {
   faVolumeHigh,
 } from '@fortawesome/free-solid-svg-icons';
 import { faSoundcloud, faXTwitter, faYoutube } from '@fortawesome/free-brands-svg-icons';
+import { getYouTubeVideoId } from '@/lib/youtube';
 import styles from './MomentCard.module.css';
 import tooltipStyles from '@/components/Tooltip/Tooltip.module.css';
 
@@ -27,27 +28,6 @@ export interface MomentCardProps {
   extendTopConnector?: boolean;
   extendBottomConnector?: boolean;
   onPress?: () => void;
-}
-
-function getYouTubeVideoId(url?: string) {
-  if (!url) {
-    return null;
-  }
-
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=)([A-Za-z0-9_-]{11})/,
-    /(?:youtu\.be\/)([A-Za-z0-9_-]{11})/,
-    /(?:youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match?.[1]) {
-      return match[1];
-    }
-  }
-
-  return null;
 }
 
 function getTimelineIcon(mediaType: MomentCardProps['mediaType'], sourceUrl?: string) {
@@ -131,18 +111,10 @@ function MomentCardImpl({
         : undefined;
 
   return (
-    <article
+    <AriaButton
       ref={ref}
       className={`${styles.card} ${isActive ? styles.active : ''} ${isStartMoment ? styles.startMoment : ''} ${isEndMoment ? styles.endMoment : ''}`}
-      role="button"
-      tabIndex={0}
-      onClick={onPress}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          onPress?.();
-        }
-      }}
+      onPress={onPress}
       aria-pressed={isActive}
     >
       <div className={styles.timeRail}>
@@ -159,7 +131,6 @@ function MomentCardImpl({
             <AriaButton
               className={styles.timelineDotButton}
               aria-label={markerTooltip}
-              title={markerTooltip}
             >
               <FontAwesomeIcon icon={timelineIcon} className={styles.timelineIcon} />
             </AriaButton>
@@ -254,9 +225,9 @@ function MomentCardImpl({
           <p className={styles.text}>{content}</p>
         )}
       </div>
-    </article>
+    </AriaButton>
   );
 }
 
-export const MomentCard = forwardRef<HTMLDivElement, MomentCardProps>(MomentCardImpl);
+export const MomentCard = forwardRef<HTMLButtonElement, MomentCardProps>(MomentCardImpl);
 MomentCard.displayName = 'MomentCard';

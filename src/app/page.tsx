@@ -12,6 +12,10 @@ export default function Home() {
     window.open('https://react-spectrum.adobe.com/react-aria/', '_blank', 'noopener,noreferrer');
   };
 
+  const handleEventClick = () => {
+    window.location.href = '/event/test-event-123';
+  };
+
   return (
     <div className={styles.pageContainer}>
       <main className={styles.main}>
@@ -22,6 +26,9 @@ export default function Home() {
           Welcome to your Next.js React application. This project is ready for development with react-aria and a custom design system!
         </p>
         <div className={styles.buttonGroup}>
+          <Button onPress={handleEventClick} aria-label="View sample event timeline">
+            View Event Timeline
+          </Button>
           <Button onPress={handleDocsClick} aria-label="Read the Next.js documentation (opens in new tab)">
             Read the Docs
           </Button>

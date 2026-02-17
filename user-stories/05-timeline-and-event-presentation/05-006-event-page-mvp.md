@@ -11,7 +11,7 @@ I want **to see a simple event page with a timeline of media items**,
 So that **I can quickly understand what's happening in an event without complex features**.
 
 ## Acceptance Criteria
-- [ ] Event page accessible at `/event/[event-id]` route
+- [ ] Event page accessible at `/event/[id]` route
 - [ ] Event header displays event title and basic information
 - [ ] Timeline displays media items in a clean, vertical layout
 - [ ] Each timeline item shows timestamp, source, and content preview
@@ -55,7 +55,7 @@ So that **I can quickly understand what's happening in an event without complex 
 3. **EventCard** - Individual timeline item with media preview
 
 ### Route Structure
-- `/src/app/event/[event-id]/page.tsx` - Dynamic event page
+- `/src/app/event/[id]/page.tsx` - Dynamic event page
 
 ### Styling Approach
 - Each component has its own `.module.css` file

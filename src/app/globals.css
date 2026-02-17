@@ -234,20 +234,6 @@
   --color-focus-ring: var(--color-primary-500);
   --color-disabled-background: var(--color-gray-300);
   --color-disabled-text: var(--color-gray-500);
-
-  /* Cinematic UI Colors (non-inverted by theme) */
-  --color-cinematic-black: #000000;
-  --color-cinematic-stage: #05070b;
-  --color-cinematic-border: #1a1f2a;
-  --color-cinematic-muted: #aab3c2;
-  --color-cinematic-live-bg: #252a33;
-  --color-cinematic-live-text: #f4f7fc;
-  --color-cinematic-grad-start: #132241;
-  --color-cinematic-grad-mid: #321a57;
-  --color-cinematic-grad-end: #123a45;
-  --color-cinematic-cyan: #41d8f5;
-  --color-cinematic-cyan-bright: #8cefff;
-  --color-cinematic-control-disabled: #586171;
   
   color-scheme: dark;
 }

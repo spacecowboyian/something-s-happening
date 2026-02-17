@@ -17,6 +17,7 @@ import {
 import { EventHeader } from '../EventHeader';
 import { Timeline } from '../Timeline';
 import { MomentCard } from '@/components/MomentCard';
+import { getYouTubeVideoId } from '@/lib/youtube';
 import styles from './PlayableTimeline.module.css';
 
 export interface TimelineItem {
@@ -79,27 +80,6 @@ declare global {
     };
     onYouTubeIframeAPIReady?: () => void;
   }
-}
-
-function getYouTubeVideoId(url?: string) {
-  if (!url) {
-    return null;
-  }
-
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=)([A-Za-z0-9_-]{11})/,
-    /(?:youtu\.be\/)([A-Za-z0-9_-]{11})/,
-    /(?:youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match?.[1]) {
-      return match[1];
-    }
-  }
-
-  return null;
 }
 
 function ensureYouTubeApi() {
@@ -291,11 +271,16 @@ function YouTubePlayback({
       onReadyStateChange?.(false);
       try {
         playerRef.current?.destroy();
-      } catch {
+      } catch (error) {
+        // Log the error to aid debugging while still preventing it from breaking unmount flow.
+        console.error('Failed to destroy YouTube player instance', error);
       }
       playerRef.current = null;
     };
-  }, [videoId, isPlaying, onComplete, containerId, onPlayStateChange, onMuteStateChange, onReadyStateChange]);
+    // isPlaying is intentionally not a dependency - it's only used in onReady callback
+    // and we don't want to recreate the player when play state changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoId, onComplete, containerId, onPlayStateChange, onMuteStateChange, onReadyStateChange]);
 
   useEffect(() => {
     if (!playerRef.current) {
@@ -815,7 +800,7 @@ export function PlayableTimeline({
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target?.closest('input, textarea, select, button, [role="button"], [contenteditable="true"]')) {
+      if (target?.closest('input, textarea, select, button, [contenteditable="true"]')) {
         return;
       }
 
@@ -832,6 +817,11 @@ export function PlayableTimeline({
       if (event.key === ' ' || event.code === 'Space' || event.key === 'Spacebar') {
         event.preventDefault();
         onTogglePlay();
+      }
+
+      if (event.key === 'm' || event.key === 'M') {
+        event.preventDefault();
+        setIsMuted((value) => !value);
       }
     };
 
@@ -994,13 +984,7 @@ export function PlayableTimeline({
                     : 'Switch to chronological order'
                 }
               >
-                <span
-                  title={
-                    order === 'chronological'
-                      ? 'Switch to reverse chronological order'
-                      : 'Switch to chronological order'
-                  }
-                >
+                <span>
                   <FontAwesomeIcon icon={order === 'chronological' ? faChevronUp : faChevronDown} />
                 </span>
               </AriaButton>
@@ -1015,38 +999,36 @@ export function PlayableTimeline({
 
       <div className={styles.timelineSection}>
         <Timeline>
-          {orderedItems.map((item, index) => (
-            (() => {
-              const isFirstVisible = index === 0;
-              const isLastVisible = index === orderedItems.length - 1;
-              const isLatestMoment = item.id === chronologicalLastId;
-              const shouldExtendTop = status !== 'completed' && order === 'reverse-chronological' && isLatestMoment;
-              const shouldExtendBottom = status !== 'completed' && order === 'chronological' && isLatestMoment;
-              const showTopConnector = !isFirstVisible || shouldExtendTop;
-              const showBottomConnector = !isLastVisible || shouldExtendBottom;
+          {orderedItems.map((item, index) => {
+            const isFirstVisible = index === 0;
+            const isLastVisible = index === orderedItems.length - 1;
+            const isLatestMoment = item.id === chronologicalLastId;
+            const shouldExtendTop = status !== 'completed' && order === 'reverse-chronological' && isLatestMoment;
+            const shouldExtendBottom = status !== 'completed' && order === 'chronological' && isLatestMoment;
+            const showTopConnector = !isFirstVisible || shouldExtendTop;
+            const showBottomConnector = !isLastVisible || shouldExtendBottom;
 
-              return (
-            <MomentCard
-              key={item.id}
-              ref={(node) => setItemRef(item.id, node)}
-              timestamp={item.timestamp}
-              source={item.source}
-              sourceUrl={item.sourceUrl}
-              content={item.content}
-              mediaType={item.mediaType}
-              mediaUrl={item.mediaUrl}
-              isActive={index === currentIndex}
-              isStartMoment={item.id === chronologicalFirstId}
-              isEndMoment={status === 'completed' && item.id === chronologicalLastId}
-              showTopConnector={showTopConnector}
-              showBottomConnector={showBottomConnector}
-              extendTopConnector={shouldExtendTop}
-              extendBottomConnector={shouldExtendBottom}
-              onPress={() => handleSelectMoment(index)}
-            />
-              );
-            })()
-          ))}
+            return (
+              <MomentCard
+                key={item.id}
+                ref={(node) => setItemRef(item.id, node)}
+                timestamp={item.timestamp}
+                source={item.source}
+                sourceUrl={item.sourceUrl}
+                content={item.content}
+                mediaType={item.mediaType}
+                mediaUrl={item.mediaUrl}
+                isActive={index === currentIndex}
+                isStartMoment={item.id === chronologicalFirstId}
+                isEndMoment={status === 'completed' && item.id === chronologicalLastId}
+                showTopConnector={showTopConnector}
+                showBottomConnector={showBottomConnector}
+                extendTopConnector={shouldExtendTop}
+                extendBottomConnector={shouldExtendBottom}
+                onPress={() => handleSelectMoment(index)}
+              />
+            );
+          })}
         </Timeline>
       </div>
     </div>
