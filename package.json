@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/copy-404.js",
+    "build": "next build && node scripts/copy-404.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "jest",

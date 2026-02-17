@@ -6,8 +6,13 @@
  * client-side routing redirects for GitHub Pages.
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const custom404Path = path.join(__dirname, '..', 'public', '404.html');
 const outputPath = path.join(__dirname, '..', 'out', '404.html');
