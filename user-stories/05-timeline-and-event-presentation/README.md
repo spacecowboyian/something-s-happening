@@ -8,9 +8,13 @@ This epic covers how events and their associated media are displayed:
 - Chronological timeline view
 - Live updates vs archived state
 - Media rendering (images, videos, text)
+- Sequential media playback with auto-advance
+- Animated text rendering (caption-style display)
+- Background image slideshows during text moments
 - Source attribution
 - Timestamp display
 - Responsive design for all devices
+- Mobile-specific behaviors (autoplay, portrait mode, collapsible headers)
 - Infinite scroll / pagination
 - Media preview and full view
 
@@ -28,6 +32,10 @@ This epic covers how events and their associated media are displayed:
 - Performance optimization for long timelines
 - Accessibility (screen readers, keyboard navigation)
 - State management for live vs archived
+- Mobile detection and device-specific behavior
+- Caption animation and text word-grouping algorithms
+- Image preloading and slideshow transitions
+- Dynamic duration calculation for text-based moments
 
 ## MVP Priority
 🔴 Critical - Core user experience of the platform

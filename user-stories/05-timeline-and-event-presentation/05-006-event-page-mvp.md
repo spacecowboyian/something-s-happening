@@ -20,6 +20,11 @@ So that **I can quickly understand what's happening in an event without complex 
 - [ ] Components are reusable and styled with CSS modules
 - [ ] Page is responsive and works on mobile and desktop
 - [ ] UI follows the established design patterns from the Button component
+- [ ] Media player displays full moment text at bottom with expandable ellipsis
+- [ ] Mobile: Player autoplays from first item (no autoplay on desktop)
+- [ ] Mobile: Player uses portrait format optimized for phone screens
+- [ ] Mobile: Event header collapses to title-only with chevron to expand
+- [ ] Mobile: Tapping a moment returns focus to the player
 
 ## Technical Notes
 - This is a stripped-down version of story 05-001 focusing only on UI
@@ -29,6 +34,9 @@ So that **I can quickly understand what's happening in an event without complex 
 - No backend integration needed for MVP - uses mock data
 - Components should be placed in `/src/components` with their CSS modules
 - Route should be in `/src/app/event/[event-id]/page.tsx`
+- Mock data should include varied text lengths and image examples for testing
+- Mobile detection needed for conditional autoplay and header collapse behavior
+- Portrait player aspect ratio should adapt to screen orientation on mobile
 
 ## Dependencies
 - Existing Button component pattern

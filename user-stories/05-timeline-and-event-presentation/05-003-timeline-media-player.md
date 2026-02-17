@@ -19,12 +19,18 @@ So that **I can experience the event like a continuous stream or show**.
 - [ ] Live playback waits for new content if chronological mode selected
 - [ ] Playback can run continuously without user interaction
 - [ ] Playback suitable for passive display (TV/browser window)
+- [ ] Text moments display as animated captions (2-3 words at a time, 0.5s intervals)
+- [ ] Text moment duration varies based on text length
+- [ ] Images from posts used as background slideshow during text playback (5s per image)
 
 ## Technical Notes
 - Implement queue-based playback model
-- Define default duration for static media (e.g., 5–10 seconds)
+- Define default duration for static media (e.g., 5 seconds for images in slideshows)
+- Text moment duration calculated dynamically based on text length and caption animation timing
 - Video playback must detect completion event
 - Queue must dynamically update when new items are ingested
+- Text rendering requires caption animation engine with word-grouping logic
+- Background slideshow requires image preloading and transition management
 
 ## Dependencies
 - Media rendering layer
