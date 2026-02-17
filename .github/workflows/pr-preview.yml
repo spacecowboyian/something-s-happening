@@ -13,6 +13,11 @@ permissions:
   contents: write
   pull-requests: write
 
+# Prevent concurrent deployments to gh-pages to avoid push conflicts
+concurrency:
+  group: github-pages-deploy
+  cancel-in-progress: false
+
 env:
   REPO_NAME: something-s-happening
 
@@ -158,6 +163,16 @@ jobs:
           if [ -d "$PR_DIR" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
+            
+            # Pull latest changes to avoid non-fast-forward push rejection
+            git pull origin gh-pages --rebase || {
+              echo "Warning: Pull failed, attempting merge strategy"
+              git pull origin gh-pages --no-rebase || {
+                echo "Error: Unable to pull latest changes"
+                exit 1
+              }
+            }
+            
             git rm -rf "$PR_DIR"
             git commit -m "Clean up preview for PR #${{ github.event.pull_request.number }}"
             git push
