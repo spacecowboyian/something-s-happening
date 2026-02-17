@@ -133,6 +133,11 @@ const mockEventData = {
   },
 };
 
+export async function generateStaticParams() {
+  // Generate static params for all available event IDs
+  return Object.keys(mockEventData).map((id) => ({ id }));
+}
+
 export default async function EventPage({
   params,
 }: {
