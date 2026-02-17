@@ -38,6 +38,22 @@ export interface YouTubeVideo {
 }
 
 /**
+ * Convert YouTube video to SourcePost data format
+ */
+export function youtubeVideoToSourcePost(video: YouTubeVideo, eventId: string) {
+  return {
+    platform: 'YOUTUBE' as const,
+    platformPostId: video.id,
+    url: video.videoUrl,
+    authorHandle: video.channelTitle,
+    postedAt: new Date(video.publishedAt),
+    mediaType: 'VIDEO' as const,
+    text: video.description || video.title,
+    eventId,
+  };
+}
+
+/**
  * Search for YouTube videos based on criteria
  */
 export async function searchYouTubeVideos(

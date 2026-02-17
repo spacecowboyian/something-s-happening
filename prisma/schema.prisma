@@ -9,52 +9,83 @@ datasource db {
   provider = "sqlite"
 }
 
-// Event model - represents a specific happening/event
+// Event model for aggregation prototype
 model Event {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  location    String?
-  latitude    Float?
-  longitude   Float?
-  startTime   DateTime
-  endTime     DateTime?
-  status      String   @default("upcoming") // live, upcoming, completed
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String       @id @default(cuid())
+  slug         String       @unique
+  title        String
+  description  String?
+  centerLat    Float?
+  centerLng    Float?
+  radiusMeters Int?
+  startsAt     DateTime
+  endsAt       DateTime?
+  status       EventStatus  @default(OPEN)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   
-  media       Media[]
-  
-  @@index([status, startTime])
-  @@index([startTime, endTime])
+  sourcePosts  SourcePost[]
+  ingestRuns   IngestRun[]
 }
 
-// Media model - represents media items associated with events
-model Media {
-  id          String   @id @default(uuid())
-  eventId     String
-  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+// Source post from various platforms
+model SourcePost {
+  id             String       @id @default(cuid())
+  platform       Platform
+  platformPostId String
+  url            String
+  authorHandle   String?
+  postedAt       DateTime
+  capturedAt     DateTime     @default(now())
+  lat            Float?
+  lng            Float?
+  mediaType      MediaType
+  text           String?
+  eventId        String
   
-  type        String   // image, video, text
-  source      String   // twitter, instagram, reddit, manual
-  sourceUrl   String?  // original URL if from external source
-  sourceId    String?  // external source ID
+  event          Event        @relation(fields: [eventId], references: [id])
   
-  url         String   // CDN or storage URL
-  thumbnailUrl String? // thumbnail for videos
+  @@unique([platform, platformPostId])
+  @@index([eventId])
+}
+
+// Ingest run tracking
+model IngestRun {
+  id            String       @id @default(cuid())
+  eventId       String
+  platform      Platform
+  startedAt     DateTime     @default(now())
+  finishedAt    DateTime?
+  status        IngestStatus
+  errorMessage  String?
+  itemsFound    Int          @default(0)
+  itemsInserted Int          @default(0)
   
-  title       String?
-  description String?
-  author      String?
-  authorUrl   String?
-  
-  timestamp   DateTime // when the media was created/posted
-  metadata    String?  // JSON string for additional data
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  @@index([eventId, timestamp])
-  @@index([source, sourceId])
-  @@index([timestamp])
+  event         Event        @relation(fields: [eventId], references: [id])
+}
+
+// Enums
+enum EventStatus {
+  OPEN
+  CLOSED
+}
+
+enum Platform {
+  X
+  BLUESKY
+  YOUTUBE
+  OTHER
+}
+
+enum MediaType {
+  VIDEO
+  IMAGE
+  AUDIO
+  TEXT
+  LINK
+}
+
+enum IngestStatus {
+  SUCCESS
+  ERROR
 }
