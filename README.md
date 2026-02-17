@@ -223,3 +223,21 @@ React Aria provides accessible behavior through data attributes. Use these in yo
 - `[data-selected]` - Element is selected (for lists, etc.)
 
 See the [React Aria documentation](https://react-spectrum.adobe.com/react-aria/) for more details on component patterns and accessibility features.
+
+## GitHub Actions & CI/CD
+
+This repository uses GitHub Actions for continuous integration and deployment:
+
+- **Deploy to Pages** (`.github/workflows/nextjs.yml`) - Automatically deploys the site to GitHub Pages on push to `main`
+- **PR Checks** (`.github/workflows/pr-checks.yml`) - Runs linting and build checks on pull requests
+
+### Authentication for Automated Workflows
+
+If you need to create workflows that push changes back to the repository, see:
+- [GitHub Actions Authentication Guide](./docs/GITHUB_ACTIONS_AUTHENTICATION.md) - Comprehensive guide on configuring git authentication
+- [Example Workflow](./.github/workflows/example-git-push.yml.disabled) - Reference implementation showing proper authentication setup
+
+Key points:
+- Use `actions/checkout@v4` with `persist-credentials: true` (default)
+- Ensure `permissions: contents: write` for workflows that push changes
+- Configure git identity using `github-actions[bot]` for automated commits

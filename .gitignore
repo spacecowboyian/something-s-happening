@@ -47,3 +47,16 @@ next-env.d.ts
 *.db-journal
 *.db-wal
 *.db-shm
+
+# Build artifacts that shouldn't be in the repository
+# (These are generated during `npm run build` and should only exist in the `out/` directory)
+/__next.*
+/404/
+/_next/
+/_not-found/
+/event/
+/index.html
+/index.txt
+/404.html
+/favicon.ico
+/*.svg

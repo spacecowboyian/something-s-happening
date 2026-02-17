@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    // GitHub Pages 404 redirect handler for Single Page Apps (SPAs)
+    // This script captures the current URL and redirects to the index page
+    // after storing the original path in sessionStorage
+    
+    (function() {
+      var pathSegmentsToKeep = 1; // Keep '/something-s-happening' segment
+      
+      var l = window.location;
+      var baseUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '');
+      var pathSegments = l.pathname.split('/').filter(function(segment) {
+        return segment;
+      });
+      
+      // Keep only the base path segments (repo name for GitHub Pages)
+      var basePath = '/' + pathSegments.slice(0, pathSegmentsToKeep).join('/');
+      
+      // Get the rest of the path that should be handled by the app
+      var appPath = '/' + pathSegments.slice(pathSegmentsToKeep).join('/');
+      
+      // Store the full path (including search and hash) in sessionStorage
+      var fullPath = appPath + l.search + l.hash;
+      sessionStorage.setItem('redirect', fullPath);
+      
+      // Redirect to the base path index
+      window.location.replace(baseUrl + basePath + '/');
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting to the app...</p>
+</body>
+</html>
