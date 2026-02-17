@@ -46,10 +46,3 @@
   flex-direction: column;
   gap: var(--spacing-md);
 }
-
-/* Responsive: Switch to row layout on larger screens */
-@media (min-width: 640px) {
-  .buttonGroup {
-    flex-direction: row;
-  }
-}

@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
-
-const openSans = Open_Sans({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: "Something's Happening",
@@ -20,7 +14,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={openSans.className}>
+      <head>
+        {/* Google Fonts loaded at runtime for static export compatibility */}
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+        />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
         <ThemeProvider>
           {children}
         </ThemeProvider>
