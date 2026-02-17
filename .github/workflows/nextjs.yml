@@ -75,6 +75,9 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Disable API routes for static export
         run: |
+          # API routes cannot be included in static exports.
+          # This step temporarily renames the API directory for the build only.
+          # The change is not committed and only affects the build artifact.
           if [ -d "src/app/api" ]; then
             mv src/app/api src/app/_api_disabled
             echo "API routes disabled for static export"
