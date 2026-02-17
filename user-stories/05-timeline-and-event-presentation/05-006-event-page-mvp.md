@@ -5,10 +5,13 @@
 - [x] In Progress
 - [ ] Completed
 
+## Vision & Context
+In a world drowning in algorithmic feeds and manufactured content, real events happening in real time are losing visibility. This feature aims to make real-world moments as engaging and accessible as short-form content platforms like YouTube Shorts, but grounded in reality. When someone shares a link to an event, recipients should be able to immediately hop in and start consuming moments—no friction, no complexity. This isn't about entertainment for entertainment's sake; it's about keeping humans connected to the world around them and to each other through what actually matters.
+
 ## User Story
-As a **user viewing an event**,
-I want **to see a simple event page with a timeline of media items**,
-So that **I can quickly understand what's happening in an event without complex features**.
+As a **user receiving a link to an event**,
+I want **to instantly start watching/reading moments in a familiar, engaging short-form content experience**,
+So that **I can stay connected to real-world events that matter without the friction of complex interfaces**.
 
 ## Acceptance Criteria
 - [ ] Event page accessible at `/event/[id]` route
@@ -20,6 +23,11 @@ So that **I can quickly understand what's happening in an event without complex 
 - [ ] Components are reusable and styled with CSS modules
 - [ ] Page is responsive and works on mobile and desktop
 - [ ] UI follows the established design patterns from the Button component
+- [ ] Media player displays full moment text at bottom with expandable ellipsis
+- [ ] Mobile: Player autoplays from first item (no autoplay on desktop)
+- [ ] Mobile: Player uses portrait format optimized for phone screens
+- [ ] Mobile: Event header collapses to title-only with chevron to expand
+- [ ] Mobile: Tapping a moment returns focus to the player
 
 ## Technical Notes
 - This is a stripped-down version of story 05-001 focusing only on UI
@@ -29,6 +37,9 @@ So that **I can quickly understand what's happening in an event without complex 
 - No backend integration needed for MVP - uses mock data
 - Components should be placed in `/src/components` with their CSS modules
 - Route should be in `/src/app/event/[event-id]/page.tsx`
+- Mock data should include varied text lengths and image examples for testing
+- Mobile detection needed for conditional autoplay and header collapse behavior
+- Portrait player aspect ratio should adapt to screen orientation on mobile
 
 ## Dependencies
 - Existing Button component pattern
@@ -77,3 +88,12 @@ So that **I can quickly understand what's happening in an event without complex 
 - Drive the header time range from the first and last timeline posts so the displayed event window reflects actual ingested media timing.
 - Remove the live update strip from the header and present same-day event time as a true range from first-post time to last-post time.
 - Tighten event header vertical spacing to a fixed 12px top/bottom rhythm for a more compact stage layout.
+- Add example images to moments in the fake data (both single and multiple images per moment) to use as background slideshows during text moment playback, displaying each image for 5 seconds.
+- Vary text length in fake data moments to support dynamic text moment duration based on content length.
+- Display full text of every moment at the bottom of the player area in small font with an ellipsis that users can expand if needed.
+
+### 2026-02-17 — Mobile-Specific Features — Requested by: @spacecowboyian
+- Enable player autoplay from the first item on mobile (no autoplay on desktop).
+- Configure player to use portrait format on mobile to fit phone screens.
+- When user taps on a moment, return focus to the player.
+- Minimize event header on mobile to show just the title in a slim font that fits above the player, with a chevron icon button on the right to expand and show all event header info.
