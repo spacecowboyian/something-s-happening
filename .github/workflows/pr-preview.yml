@@ -15,7 +15,9 @@ env:
 
 jobs:
   deploy:
-    if: github.event.action != 'closed'
+    # Only deploy for PRs from the same repository (not forks) to prevent arbitrary code execution
+    # Fork PRs can still be reviewed and tested locally before being merged
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -80,7 +82,7 @@ jobs:
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
-            const previewUrl = `https://spacecowboyian.github.io/${{ env.REPO_NAME }}/pr-${prNumber}/`;
+            const previewUrl = `https://${context.repo.owner}.github.io/${{ env.REPO_NAME }}/pr-${prNumber}/`;
             
             const commentBody = `🚀 Preview deployment ready!
             
