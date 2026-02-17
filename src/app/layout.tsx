@@ -29,6 +29,20 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"
           rel="stylesheet"
         />
+        {/* GitHub Pages SPA redirect handler */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var redirect = sessionStorage.getItem('redirect');
+                if (redirect) {
+                  sessionStorage.removeItem('redirect');
+                  history.replaceState(null, '', redirect);
+                }
+              })();
+            `,
+          }}
+        />
       </head>
       <body>
         <ThemeProvider>
