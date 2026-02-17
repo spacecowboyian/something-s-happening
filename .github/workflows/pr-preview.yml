@@ -50,6 +50,10 @@ jobs:
 
       - name: Disable API routes for static export
         run: |
+          # API routes cannot be included in static exports.
+          # This step temporarily renames the API directory for the build only.
+          # The change is not committed and only affects the build artifact.
+          # The original source remains unchanged in the repository.
           if [ -d "src/app/api" ]; then
             mv src/app/api src/app/_api_disabled
             echo "API routes disabled for static export"
@@ -115,12 +119,22 @@ jobs:
     if: github.event.action == 'closed'
     runs-on: ubuntu-latest
     steps:
+      # Security: Only allow cleanup for PRs from the same repository
+      # This prevents malicious actors from forks executing code with write permissions
+      - name: Check PR source
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "PR is from a fork. Skipping cleanup for security reasons."
+          exit 0
+
       - name: Checkout gh-pages branch
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/checkout@v4
         with:
           ref: gh-pages
 
       - name: Remove preview directory
+        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           PR_DIR="pr-${{ github.event.pull_request.number }}"
           if [ -d "$PR_DIR" ]; then
