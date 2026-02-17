@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   // In development, we need server features for API routes and database
   ...(isProd && { output: 'export' }),
   basePath: isProd ? basePath : '',
+  assetPrefix: isProd ? basePath : '',
   trailingSlash: true,
   images: {
     unoptimized: true,
