@@ -12,6 +12,16 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Build artifacts that should not be linted:
+    "_next/**",
+    "_not-found/**",
+    "event/**",
+    "404/**",
+    "__next.*",
+    "*.html",
+    "*.txt",
+    "*.svg",
+    "favicon.ico",
   ]),
 ]);
 
