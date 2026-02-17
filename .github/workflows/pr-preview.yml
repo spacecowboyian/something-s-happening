@@ -22,9 +22,7 @@ jobs:
     # Fork PRs can still be reviewed and tested locally before being merged
     # For push events, always deploy (since they come from branches in the same repo)
     # For PR events, only deploy if not closed and from the same repo
-    if: |
-      (github.event_name == 'push') ||
-      (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository)
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -147,10 +145,7 @@ This preview will be automatically cleaned up when the PR is closed or merged.`;
   cleanup:
     # Security: Only run cleanup for PRs from the same repository (not forks)
     # This prevents malicious actors from executing code with write permissions
-    if: |
-      github.event_name == 'pull_request_target' && 
-      github.event.action == 'closed' && 
-      github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'pull_request_target' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Checkout gh-pages branch
