@@ -1,0 +1,146 @@
+name: PR Preview Deployment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  REPO_NAME: something-s-happening
+
+jobs:
+  deploy:
+    # Only deploy for PRs from the same repository (not forks) to prevent arbitrary code execution
+    # Fork PRs can still be reviewed and tested locally before being merged
+    if: github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect package manager
+        id: detect-package-manager
+        run: |
+          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
+            echo "runner=yarn" >> $GITHUB_OUTPUT
+            exit 0
+          elif [ -f "${{ github.workspace }}/package.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "Unable to determine package manager"
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+
+      - name: Install dependencies
+        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Disable API routes for static export
+        run: |
+          # API routes cannot be included in static exports.
+          # This step temporarily renames the API directory for the build only.
+          # The change is not committed and only affects the build artifact.
+          # The original source remains unchanged in the repository.
+          if [ -d "src/app/api" ]; then
+            mv src/app/api src/app/_api_disabled
+            echo "API routes disabled for static export"
+          fi
+
+      - name: Build with Next.js
+        env:
+          NEXT_PUBLIC_BASE_PATH: /${{ env.REPO_NAME }}/pr-${{ github.event.pull_request.number }}
+        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          destination_dir: pr-${{ github.event.pull_request.number }}
+          keep_files: true
+
+      - name: Comment PR with preview URL
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const previewUrl = `https://${context.repo.owner}.github.io/${{ env.REPO_NAME }}/pr-${prNumber}/`;
+            
+            const commentBody = `🚀 Preview deployment ready!
+
+**Preview URL:** ${previewUrl}
+
+This preview will be automatically cleaned up when the PR is closed or merged.`;
+            
+            // Check if a comment already exists
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber
+            });
+            
+            const botComment = comments.find(c => 
+              c.user.type === 'Bot' && 
+              c.body.includes('Preview deployment ready!')
+            );
+            
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+            }
+
+  cleanup:
+    # Security: Only run cleanup for PRs from the same repository (not forks)
+    # This prevents malicious actors from executing code with write permissions
+    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Remove preview directory
+        run: |
+          PR_DIR="pr-${{ github.event.pull_request.number }}"
+          if [ -d "$PR_DIR" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git rm -rf "$PR_DIR"
+            git commit -m "Clean up preview for PR #${{ github.event.pull_request.number }}"
+            git push
+            echo "Preview directory $PR_DIR removed"
+          else
+            echo "Preview directory $PR_DIR not found, nothing to clean up"
+          fi
