@@ -202,23 +202,25 @@ const details = await getVideoDetails([
 
 ## Integration with Existing Database
 
-YouTube videos are stored as `Media` items with:
+YouTube videos are stored as `SourcePost` items with:
 
 ```typescript
 {
-  type: 'video',
-  source: 'youtube',
-  sourceId: 'dQw4w9WgXcQ',           // Video ID
+  platform: 'YOUTUBE',                    // Platform enum
+  platformPostId: 'dQw4w9WgXcQ',         // Video ID
   url: 'https://youtube.com/watch?v=...', // Full URL
-  thumbnailUrl: 'https://img.youtube.com/vi/.../mqdefault.jpg',
-  title: 'Video Title',
-  description: 'Video description',
-  author: 'Channel Name',
-  timestamp: new Date('2026-02-17T...'),  // Published date
+  authorHandle: 'Channel Name',
+  postedAt: new Date('2026-02-17T...'),  // Published date
+  mediaType: 'VIDEO',                    // MediaType enum
+  text: 'Video description or title',
+  eventId: 'event-id',
+  capturedAt: new Date(),                // When we captured it
 }
 ```
 
-**No database changes needed** - the existing schema already supports all fields!
+**Schema aligned with main branch** - uses SourcePost model with Platform and MediaType enums!
+
+**No database schema changes needed** - the existing SourcePost model from main already supports YouTube videos!
 
 ---
 

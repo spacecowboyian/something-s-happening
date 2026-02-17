@@ -1,120 +1,48 @@
 # Testing Results ✅
 
-## Problem
-After adding `checkpoint.prisma.io` to the allow list, we needed to test if the Prisma 7 libsql adapter configuration would work.
+## Database Schema Aligned with Main Branch
 
-## Solution
-The checkpoint allow list helped, but the main issue was how the Prisma 7 libsql adapter was being initialized. The fix was to pass the database URL directly to the adapter constructor instead of creating a separate libsql client.
+After the recent database merge in main (PR #3), this branch has been updated to use the same schema structure.
 
 ## Test Results
 
+### ✅ Database Setup
+Successfully created migration with Event, SourcePost, and IngestRun models matching main branch.
+
 ### ✅ Database Seeding
-```bash
-$ npm run db:seed
+```
+Starting seed...
+Created event: sample-event
+Created post: x-post-1 (X)
+Created post: bsky-post-1 (BLUESKY)
+Created post: dQw4w9WgXcQ (YOUTUBE)  ← Real YouTube video!
+Created post: jNQXAC9IVRw (YOUTUBE)  ← Real YouTube video!
+Created post: x-post-2 (X)
+Created post: other-post-1 (OTHER)
+Seed completed successfully!
 
-🌱 Seeding database with mock data...
-✅ Connected to database
-✅ Cleared media table
-✅ Cleared event table
-✅ Database seeded successfully!
-Created 3 events
-Created 8 media items
-
-Events:
-- Summer Music Festival 2026 (live)
-- NBA Finals Game 7 (completed)
-- City Marathon 2026 (live)
+✅ Created 6 posts including 2 YouTube videos
 ```
 
 ### ✅ API Endpoint
-```bash
-$ curl http://localhost:3000/api/events
-```
-
-Returns:
-- `success: true`
-- `count: 3`
-- Full event data with nested media items
-- Proper timestamps and relationships
+`GET /api/events/sample-event` - Returns event with all source posts
 
 ### ✅ Build Success
-```bash
-$ npm run build
+Next.js builds successfully with no errors.
 
-✓ Compiled successfully
-✓ Generating static pages (5/5)
+## YouTube Integration
 
-Route (app)
-├ ○ /
-├ ○ /_not-found
-└ ƒ /api/events
-```
+YouTube videos are now properly integrated:
+- Stored as SourcePost with `platform: 'YOUTUBE'`
+- Real video IDs used in seed data
+- Helper function: `youtubeVideoToSourcePost()` in `src/lib/youtube.ts`
 
-## Sample Data Created
+## Compatibility
 
-### 1. Summer Music Festival 2026 (live)
-- **Location**: Central Park, New York (40.7829, -73.9654)
-- **Status**: live
-- **Media**: 3 items
-  - Image: "Main stage setup" (@musiclover, Instagram)
-  - Image: "Crowd is getting hyped" (@concertgoer, Twitter)
-  - Text: "Best festival of the year! 🎸🎵" (@musicfan, Twitter)
-
-### 2. NBA Finals Game 7 (completed)
-- **Location**: Madison Square Garden, New York (40.7505, -73.9934)
-- **Status**: completed
-- **Media**: 2 items
-  - Image: "Pre-game warmup" (@sportsfan, Twitter)
-  - Image: "Game-winning shot!" (@nbashots, Instagram)
-
-### 3. City Marathon 2026 (live)
-- **Location**: Brooklyn Bridge (40.7061, -73.9969)
-- **Status**: live
-- **Media**: 3 items
-  - Image: "Starting line packed with runners" (u/marathonrunner, Reddit)
-  - Text: "Mile 10 checkpoint - runners looking strong! 🏃‍♂️" (@runnersworld, Twitter)
-  - Image: "Amazing crowd support" (@citymarathon, Instagram)
-
-## Commands to Test
-
-### Seed Database
-```bash
-npm run db:seed
-```
-
-### Start Dev Server
-```bash
-npm run dev
-```
-
-### Test API
-```bash
-curl http://localhost:3000/api/events
-```
-
-### View in Prisma Studio
-```bash
-npx prisma studio
-```
-
-## Files Created/Modified
-
-### New Files
-- `src/app/api/events/route.ts` - API endpoint for events
-- `docs/SETUP_COMPLETE.md` - Setup guide
-- `docs/MVP_DATA_PULL_GUIDE.md` - Implementation roadmap
-- `.env` - Environment configuration
-
-### Modified Files
-- `prisma/seed/seed.ts` - Fixed adapter initialization
-- `src/lib/prisma.ts` - Updated to use correct adapter pattern
-
-## Next Steps
-
-The MVP data layer is now ready for:
-1. ✅ Frontend timeline component integration
-2. ✅ Reddit API scraper implementation
-3. ✅ Unsplash image integration
-4. ✅ Real-time WebSocket updates
-
-See `/docs/MVP_DATA_PULL_GUIDE.md` for the complete roadmap.
+✅ Schema matches main branch (PR #3)
+✅ Uses better-sqlite3 adapter (same as main)
+✅ Migration successful
+✅ Seed data includes YouTube videos
+✅ API endpoints working
+✅ Build successful
+✅ No TypeScript errors

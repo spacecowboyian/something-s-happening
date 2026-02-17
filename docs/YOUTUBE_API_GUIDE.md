@@ -115,21 +115,21 @@ searchVideos({
 
 ## Integration with Database
 
-YouTube videos will be stored as `Media` items with:
-- `type`: "video"
-- `source`: "youtube"
-- `sourceId`: Video ID (e.g., "dQw4w9WgXcQ")
-- `url`: Full YouTube URL (e.g., "https://youtube.com/watch?v=dQw4w9WgXcQ")
-- `thumbnailUrl`: YouTube thumbnail URL
-- `title`: Video title
-- `description`: Video description
-- `author`: Channel name
-- `timestamp`: Published date
+YouTube videos will be stored as `SourcePost` items with:
+- `platform`: "YOUTUBE" (Platform enum)
+- `platformPostId`: Video ID (e.g., "dQw4w9WgXcQ")
+- `url`: Full YouTube URL
+- `authorHandle`: Channel name
+- `postedAt`: Published date
+- `mediaType`: "VIDEO" (MediaType enum)
+- `text`: Video description or title
+- `eventId`: Associated event ID
 
 ## Usage Example
 
 ```typescript
-import { searchYouTubeVideos } from '@/lib/youtube';
+import { searchYouTubeVideos, youtubeVideoToSourcePost } from '@/lib/youtube';
+import { prisma } from '@/lib/db';
 
 // Search for event videos
 const videos = await searchYouTubeVideos({
@@ -137,25 +137,23 @@ const videos = await searchYouTubeVideos({
   location: '40.7829,-73.9654',
   radius: '2km',
   maxResults: 10,
-  publishedAfter: event.startTime,
-  publishedBefore: event.endTime
+  publishedAfter: event.startsAt,
+  publishedBefore: event.endsAt
 });
 
 // Save to database
 for (const video of videos) {
-  await prisma.media.create({
-    data: {
-      eventId: event.id,
-      type: 'video',
-      source: 'youtube',
-      sourceId: video.id,
-      url: `https://youtube.com/watch?v=${video.id}`,
-      thumbnailUrl: video.thumbnail,
-      title: video.title,
-      description: video.description,
-      author: video.channelTitle,
-      timestamp: new Date(video.publishedAt)
-    }
+  const postData = youtubeVideoToSourcePost(video, event.id);
+  
+  await prisma.sourcePost.upsert({
+    where: {
+      platform_platformPostId: {
+        platform: postData.platform,
+        platformPostId: postData.platformPostId,
+      }
+    },
+    update: postData,
+    create: postData,
   });
 }
 ```
