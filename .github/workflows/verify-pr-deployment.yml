@@ -17,10 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout
+      # SECURITY: Check out from main branch, NOT from the PR branch
+      # We only need the test code from main; we're testing the deployed site
+      - name: Checkout main branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
