@@ -30,8 +30,9 @@ To enable GitHub Pages for this repository:
 ### Next.js Configuration
 
 The `next.config.ts` file is configured for static export:
-- `output: 'export'` - Enables static HTML export
+- `output: 'export'` - Enables static HTML export (production only)
 - `basePath: '/something-s-happening'` - Sets the base path to match the repository name (can be overridden with `NEXT_PUBLIC_BASE_PATH` env variable)
+- `trailingSlash: true` - Generates URLs with trailing slashes for proper GitHub Pages routing (e.g., `/event/123/index.html` instead of `/event/123.html`)
 - `images: { unoptimized: true }` - Disables Next.js image optimization (required for static export)
 
 **Custom Base Path**: If you fork this repository or rename it, you can override the base path by setting the `NEXT_PUBLIC_BASE_PATH` environment variable (e.g., `NEXT_PUBLIC_BASE_PATH=/my-repo-name`).
@@ -69,8 +70,17 @@ npx serve out
 - Verify the `basePath` in `next.config.ts` matches your repository name
 
 ### 404 Errors
+
+The site is configured to handle direct navigation to routes using two mechanisms:
+
+1. **Trailing Slash URLs**: The `trailingSlash: true` setting in `next.config.ts` ensures that routes like `/event/test-event-123` automatically redirect to `/event/test-event-123/` which serves the `index.html` file.
+
+2. **Custom 404 Fallback**: For routes that don't exist or edge cases where the trailing slash redirect doesn't work, a custom `404.html` page redirects users back to the app with the intended path stored in sessionStorage, allowing client-side routing to take over.
+
+If you still experience 404 errors:
 - Ensure all internal links use the Next.js `Link` component (it handles the basePath automatically)
-- For external resources, make sure they're properly referenced
+- Verify that the `.nojekyll` file exists in the output (prevents GitHub Pages from ignoring `_next` directories)
+- Check that the build output includes a `404.html` file with the redirect script
 
 ### Build Failures
 - Check the Actions tab for error logs
