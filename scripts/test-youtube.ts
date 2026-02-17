@@ -100,15 +100,16 @@ async function main() {
     console.log('\n💡 Tip: You can now integrate YouTube videos into your events');
     console.log('   See src/lib/youtube.ts for usage examples');
 
-  } catch (error: any) {
-    console.error('\n❌ Error:', error.message);
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    console.error('\n❌ Error:', errMsg);
     
-    if (error.message.includes('API key not valid')) {
+    if (errMsg.includes('API key not valid')) {
       console.log('\n🔧 Fix:');
       console.log('1. Check your API key in .env file');
       console.log('2. Verify YouTube Data API v3 is enabled in Google Cloud Console');
       console.log('3. Make sure there are no spaces or quotes in the key');
-    } else if (error.message.includes('quota')) {
+    } else if (errMsg.includes('quota')) {
       console.log('\n📊 Quota exceeded:');
       console.log('- Free tier: 10,000 units/day');
       console.log('- Each search uses 100 units');

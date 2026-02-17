@@ -15,6 +15,42 @@
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
 
 /**
+ * YouTube API response item type for search results
+ */
+interface YouTubeAPISearchItem {
+  id: { videoId: string };
+  snippet: {
+    title: string;
+    description: string;
+    channelTitle: string;
+    publishedAt: string;
+    thumbnails: {
+      default?: { url: string };
+      medium?: { url: string };
+      high?: { url: string };
+    };
+  };
+}
+
+/**
+ * YouTube API response item type for video details
+ */
+interface YouTubeAPIVideoItem {
+  id: string;
+  snippet: {
+    title: string;
+    description: string;
+    channelTitle: string;
+    publishedAt: string;
+    thumbnails: {
+      default?: { url: string };
+      medium?: { url: string };
+      high?: { url: string };
+    };
+  };
+}
+
+/**
  * Extracts the YouTube video ID from various YouTube URL formats
  * @param url - The YouTube URL to parse
  * @returns The video ID if found, null otherwise
@@ -150,7 +186,7 @@ export async function searchYouTubeVideos(
 
     console.log(`✅ Found ${data.items.length} videos`);
 
-    return data.items.map((item: any) => ({
+    return data.items.map((item: YouTubeAPISearchItem) => ({
       id: item.id.videoId,
       title: item.snippet.title,
       description: item.snippet.description,
@@ -202,7 +238,7 @@ export async function getVideoDetails(videoIds: string[]): Promise<YouTubeVideo[
 
     const data = await response.json();
 
-    return data.items.map((item: any) => ({
+    return data.items.map((item: YouTubeAPIVideoItem) => ({
       id: item.id,
       title: item.snippet.title,
       description: item.snippet.description,
