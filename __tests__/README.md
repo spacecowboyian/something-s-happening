@@ -1,4 +1,42 @@
-# User Story Template Validation Tests
+# Tests
+
+This directory contains automated tests for the application.
+
+## Test Types
+
+### 1. User Story Template Validation Tests (`user-stories.test.ts`)
+
+Validates that all user stories follow the standard template.
+
+**Run with:**
+```bash
+npm test  # Runs Jest tests
+```
+
+### 2. Deployment Verification Tests (`deployment-verification.spec.ts`)
+
+Playwright tests that verify deployed instances are working correctly.
+
+**Run with:**
+```bash
+npm run test:deployment  # Test deployment
+BASE_URL=https://example.com npm run test:deployment  # Test specific URL
+npm run test:deployment:headed  # Run with visible browser
+```
+
+## Deployment Verification
+
+The deployment tests verify:
+- ✅ Home page loads successfully
+- ✅ Page title and main heading are correct
+- ✅ Event links are present
+- ✅ Event pages load when clicked
+- ✅ 404 handling works
+- ✅ Static assets load correctly
+
+These tests run automatically after PR deployments via the `Verify PR Deployment` workflow.
+
+## User Story Validation
 
 This directory contains automated tests to ensure all user stories in the `user-stories/` directory follow the standard template defined in `user-stories/STORY_TEMPLATE.md`.
 

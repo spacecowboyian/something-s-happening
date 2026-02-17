@@ -10,6 +10,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:youtube": "tsx scripts/test-youtube.ts",
+    "test:deployment": "playwright test",
+    "test:deployment:headed": "playwright test --headed",
+    "check:pages": "bash scripts/check-github-pages.sh",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:reset": "npx prisma migrate reset --force && npm run db:seed"
@@ -34,6 +37,7 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/glob": "^8.1.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",

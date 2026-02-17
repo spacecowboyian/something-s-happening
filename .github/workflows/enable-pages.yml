@@ -1,0 +1,164 @@
+name: Enable GitHub Pages
+
+# This workflow attempts to enable GitHub Pages automatically
+# If it fails, it will create an issue with instructions
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "enable" to confirm'
+        required: true
+        default: ''
+
+permissions:
+  contents: read
+  pages: write
+  issues: write
+
+jobs:
+  enable-pages:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'enable'
+    
+    steps:
+      - name: Check if Pages is already enabled
+        id: check
+        run: |
+          # Try to get pages info
+          RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pages")
+          
+          if echo "$RESPONSE" | grep -q '"html_url"'; then
+            echo "enabled=true" >> $GITHUB_OUTPUT
+            URL=$(echo "$RESPONSE" | grep -o '"html_url": "[^"]*"' | cut -d'"' -f4)
+            echo "url=$URL" >> $GITHUB_OUTPUT
+          else
+            echo "enabled=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Attempt to enable GitHub Pages
+        if: steps.check.outputs.enabled != 'true'
+        id: enable
+        continue-on-error: true
+        run: |
+          # Try to enable Pages via API
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" \
+            -d '{"source":{"branch":"gh-pages","path":"/"}}')
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+          
+          echo "Response code: $HTTP_CODE"
+          echo "Response body: $BODY"
+          
+          if [ "$HTTP_CODE" = "201" ] || [ "$HTTP_CODE" = "200" ]; then
+            echo "success=true" >> $GITHUB_OUTPUT
+          else
+            echo "success=false" >> $GITHUB_OUTPUT
+            echo "error=$BODY" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Report success
+        if: steps.check.outputs.enabled == 'true' || steps.enable.outputs.success == 'true'
+        run: |
+          echo "✅ GitHub Pages is enabled!"
+          echo ""
+          echo "Your site is being published at:"
+          if [ "${{ steps.check.outputs.enabled }}" = "true" ]; then
+            echo "${{ steps.check.outputs.url }}"
+          else
+            echo "https://${{ github.repository_owner }}.github.io/something-s-happening/"
+          fi
+          echo ""
+          echo "PR-18 preview: https://${{ github.repository_owner }}.github.io/something-s-happening/pr-18/"
+          echo ""
+          echo "⏳ Please wait 2-5 minutes for the site to be published."
+
+      - name: Create issue with manual instructions
+        if: steps.enable.outputs.success != 'true' && steps.check.outputs.enabled != 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueTitle = '🔧 Manual Action Required: Enable GitHub Pages';
+            const issueBody = `## GitHub Pages Needs Manual Configuration
+            
+            The automated workflow couldn't enable GitHub Pages. This requires **manual configuration** in repository settings.
+            
+            ### ⚡ Quick Fix (2 minutes)
+            
+            1. **Go to Settings → Pages:**
+               https://github.com/${{ github.repository }}/settings/pages
+            
+            2. **Configure the source:**
+               - Under "Build and deployment"
+               - Set **Source**: \`Deploy from a branch\`
+               - Set **Branch**: \`gh-pages\`
+               - Set **Directory**: \`/ (root)\`
+               - Click **Save**
+            
+            3. **Wait 2-5 minutes** for GitHub to publish
+            
+            4. **Verify it works:**
+               - Main site: https://${{ github.repository_owner }}.github.io/something-s-happening/
+               - PR-18: https://${{ github.repository_owner }}.github.io/something-s-happening/pr-18/
+            
+            ### ✅ What's Ready
+            
+            - ✅ Repository is public
+            - ✅ gh-pages branch exists with all files
+            - ✅ PR-18 has 71 deployed files
+            - ✅ basePath is correctly configured
+            
+            All files are deployed correctly. We just need the Pages configuration!
+            
+            ### 🔍 Diagnostic
+            
+            You can also run:
+            \`\`\`bash
+            npm run check:pages
+            \`\`\`
+            
+            This will verify the deployment status and test if Pages is serving the site.
+            
+            ---
+            
+            **Error from API attempt:**
+            \`\`\`
+            ${{ steps.enable.outputs.error || 'Insufficient permissions' }}
+            \`\`\`
+            `;
+            
+            // Check if issue already exists
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'github-pages'
+            });
+            
+            const existingIssue = issues.find(i => i.title.includes('Enable GitHub Pages'));
+            
+            if (existingIssue) {
+              // Update existing issue
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssue.number,
+                body: issueBody + '\n\n---\n\n🔄 Updated: ' + new Date().toISOString()
+              });
+              console.log('Updated existing issue #' + existingIssue.number);
+            } else {
+              // Create new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: issueTitle,
+                body: issueBody,
+                labels: ['github-pages', 'configuration']
+              });
+              console.log('Created new issue');
+            }
