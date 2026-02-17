@@ -86,3 +86,70 @@ If you still experience 404 errors:
 - Check the Actions tab for error logs
 - Test the build locally with `npm run build`
 - Ensure all dependencies are properly installed
+
+## Understanding Dynamic Routes on GitHub Pages
+
+### Why Dynamic Routes Work with Static Generation
+
+GitHub Pages serves static files, but that doesn't mean you can't have "dynamic" routes! Here's how it works:
+
+**Static Generation with `generateStaticParams()`**: Next.js pre-generates static HTML files for all dynamic routes at build time. For example:
+- `/event/[id]/page.tsx` → generates `/event/test-event-123/index.html` and `/event/sample-event/index.html`
+- Each route becomes a static HTML file that GitHub Pages can serve
+
+**Client-Side React Still Works**: Once the static HTML loads, React hydrates the page and takes over navigation:
+- Clicking links uses client-side routing (no page reload)
+- The JavaScript bundle includes all React components and logic
+- GitHub Pages serves the static HTML, then React provides the interactivity
+
+### The Difference Between Dynamic Routes and API Routes
+
+**Dynamic Routes** ✅ Work on GitHub Pages:
+- Pre-generated at build time using `generateStaticParams()`
+- Result in static HTML files
+- Example: `/event/[id]/page.tsx` → `/event/test-event-123/index.html`
+
+**API Routes** ❌ Don't work on GitHub Pages:
+- Require a Node.js server to run
+- Execute code on each request
+- Example: `/api/events/[slug]/route.ts` - requires server-side execution
+- Must be disabled for static export (the CI workflow handles this automatically)
+
+### Alternative Hosting Options
+
+If you need server-side features (API routes, server components, dynamic data), consider these alternatives:
+
+1. **Vercel** (Recommended for Next.js):
+   - Native Next.js support with all features
+   - Free tier available
+   - Automatic deployments from GitHub
+   - Deploy: `npx vercel` or connect your GitHub repo
+
+2. **Netlify**:
+   - Good Next.js support
+   - Free tier available
+   - Automatic deployments from GitHub
+   - Supports serverless functions
+
+3. **Cloudflare Pages**:
+   - Free tier with generous limits
+   - Edge network for fast global delivery
+   - Supports Next.js with some limitations
+
+4. **GitHub Pages** (Current):
+   - ✅ Free and simple
+   - ✅ Perfect for static sites with client-side React
+   - ✅ Works great with `generateStaticParams()` for dynamic routes
+   - ❌ No server-side rendering or API routes
+   - ❌ No dynamic data fetching at request time
+
+### Why We Use GitHub Pages
+
+For this application, GitHub Pages is a great fit because:
+- All events are pre-generated at build time
+- No server-side data fetching needed during runtime
+- Client-side React provides all the interactivity
+- Completely free hosting
+- Simple CI/CD with GitHub Actions
+
+If you need to add features that require server-side processing (e.g., user authentication, real-time data updates), consider migrating to Vercel or Netlify.

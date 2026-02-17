@@ -1,13 +1,10 @@
 'use client';
 
-import { Button } from '@/components/Button';
+import Link from 'next/link';
 import { mockEventData } from '@/lib/mockEventData';
 import styles from './page.module.css';
 
 export default function Home() {
-  const handleEventClick = (eventId: string) => {
-    window.location.assign(`/event/${eventId}`);
-  };
 
   return (
     <div className={styles.pageContainer}>
@@ -20,13 +17,14 @@ export default function Home() {
         </p>
         <div className={styles.buttonGroup}>
           {Object.entries(mockEventData).map(([eventId, eventData]) => (
-            <Button
+            <Link
               key={eventId}
-              onPress={() => handleEventClick(eventId)}
+              href={`/event/${eventId}`}
+              className={styles.eventLink}
               aria-label={`View ${eventData.title} timeline`}
             >
               {eventData.title}
-            </Button>
+            </Link>
           ))}
         </div>
       </main>
