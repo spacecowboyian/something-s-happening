@@ -1,0 +1,24 @@
+/**
+ * Timeline Component Styles
+ * Uses CSS custom properties for theme support
+ */
+
+.timeline {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-xl);
+  
+  /* Colors */
+  background-color: var(--color-background);
+  
+  /* Spacing */
+  gap: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .timeline {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+}
