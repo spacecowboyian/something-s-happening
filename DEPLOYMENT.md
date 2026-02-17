@@ -31,8 +31,10 @@ To enable GitHub Pages for this repository:
 
 The `next.config.ts` file is configured for static export:
 - `output: 'export'` - Enables static HTML export
-- `basePath: '/something-s-happening'` - Sets the base path to match the repository name
+- `basePath: '/something-s-happening'` - Sets the base path to match the repository name (can be overridden with `NEXT_PUBLIC_BASE_PATH` env variable)
 - `images: { unoptimized: true }` - Disables Next.js image optimization (required for static export)
+
+**Custom Base Path**: If you fork this repository or rename it, you can override the base path by setting the `NEXT_PUBLIC_BASE_PATH` environment variable (e.g., `NEXT_PUBLIC_BASE_PATH=/my-repo-name`).
 
 ### GitHub Actions Workflow
 
