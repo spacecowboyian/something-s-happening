@@ -1,0 +1,1 @@
+This pull request adds the event details page MVP, including all necessary functionality and design to support showing the details of events in our application.
