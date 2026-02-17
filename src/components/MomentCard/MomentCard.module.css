@@ -8,11 +8,16 @@
   align-items: flex-start;
   gap: var(--spacing-md);
   position: relative;
-  padding-bottom: var(--spacing-md);
   scroll-margin-top: calc(var(--sticky-offset, 0px) + var(--spacing-md));
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+  
+  /* Override button defaults */
+  background-color: transparent;
+  border: none;
+  padding: 0 0 var(--spacing-md) 0;
+  text-align: left;
 }
 
 .card:not(.active):hover .content {

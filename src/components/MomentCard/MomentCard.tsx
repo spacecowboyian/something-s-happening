@@ -128,12 +128,13 @@ function MomentCardImpl({
       >
         {markerTooltip ? (
           <TooltipTrigger delay={0} closeDelay={0}>
-            <AriaButton
+            <span
               className={styles.timelineDotButton}
               aria-label={markerTooltip}
+              tabIndex={-1}
             >
               <FontAwesomeIcon icon={timelineIcon} className={styles.timelineIcon} />
-            </AriaButton>
+            </span>
             <Tooltip className={tooltipStyles.tooltip} placement="right">
               {markerTooltip}
             </Tooltip>
