@@ -57,3 +57,4 @@ According to `.github/copilot-instructions.md` and `.commitlintrc.json`:
 - Max 100 characters
 
 Both fixed commits comply with these rules.
+Commits have been fixed using git filter-branch
