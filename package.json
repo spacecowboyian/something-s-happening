@@ -15,7 +15,9 @@
     "check:pages": "bash scripts/check-github-pages.sh",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
-    "db:reset": "npx prisma migrate reset --force && npm run db:seed"
+    "db:reset": "npx prisma migrate reset --force && npm run db:seed",
+    "prepare": "husky",
+    "release": "standard-version"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -37,6 +39,8 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.4.1",
+    "@commitlint/config-conventional": "^20.4.1",
     "@playwright/test": "^1.58.2",
     "@types/glob": "^8.1.0",
     "@types/jest": "^30.0.0",
@@ -46,7 +50,9 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "glob": "^13.0.3",
+    "husky": "^9.1.7",
     "jest": "^30.2.0",
+    "standard-version": "^9.5.0",
     "ts-jest": "^29.4.6",
     "tsx": "^4.21.0",
     "typescript": "5.9.3"
