@@ -106,9 +106,7 @@ function MomentCardImpl({
     ? 'Start of event timeline'
     : isEndMoment
       ? 'End of completed event timeline'
-      : isActive
-        ? 'Currently playing moment'
-        : undefined;
+      : undefined;
 
   return (
     <AriaButton

@@ -33,6 +33,37 @@ function getStatus(startsAt: Date, endsAt?: Date | null) {
   return 'live'
 }
 
+function isWithinEventWindow(postedAt: Date, startsAt: Date, endsAt?: Date | null) {
+  if (postedAt < startsAt) return false
+  if (endsAt && postedAt > endsAt) return false
+  return true
+}
+
+function matchesSuperbowlStreakerFocus(text?: string | null) {
+  if (!text) return false
+  const normalized = text.toLowerCase()
+  return [
+    'streaker',
+    'field invader',
+    'field invasion',
+    'ran onto the field',
+    'ran on the field',
+    'ran onto',
+    'ran on',
+    'ran onto the field',
+    'ran on to the field',
+  ].some((keyword) => normalized.includes(keyword))
+}
+
+function getSuperbowlWindowOverride() {
+  // 9:45 PM – 10:45 PM CST on Feb 8, 2026
+  // CST is UTC-6, so this is 03:45–04:45 UTC on Feb 9, 2026.
+  return {
+    startsAt: new Date('2026-02-09T03:45:00.000Z'),
+    endsAt: new Date('2026-02-09T04:45:00.000Z'),
+  }
+}
+
 function formatValue(value: unknown, indentLevel = 0): string {
   const indent = '  '.repeat(indentLevel)
   const nextIndent = '  '.repeat(indentLevel + 1)
@@ -81,7 +112,27 @@ async function exportMockData() {
 
   const mockEventData = Object.fromEntries(
     events.map((event) => {
-      const items = event.sourcePosts.map((post) => {
+      const overrideWindow = event.slug === 'superbowl-lx-2026'
+        ? getSuperbowlWindowOverride()
+        : undefined
+      const windowStartsAt = overrideWindow?.startsAt ?? event.startsAt
+      const windowEndsAt = overrideWindow?.endsAt ?? event.endsAt
+
+      const filteredPosts = event.sourcePosts
+        .filter((post) => isWithinEventWindow(post.postedAt, windowStartsAt, windowEndsAt))
+        .filter((post) => {
+          if (event.slug !== 'superbowl-lx-2026') return true
+          return matchesSuperbowlStreakerFocus(post.text)
+        })
+        .sort((a, b) => a.postedAt.getTime() - b.postedAt.getTime())
+
+      const pinnedYouTube = event.slug === 'superbowl-lx-2026'
+        ? event.sourcePosts.find((post) =>
+            post.platform === Platform.YOUTUBE && matchesSuperbowlStreakerFocus(post.text)
+          )
+        : undefined
+
+      const items = filteredPosts.map((post) => {
         const mediaUrl =
           post.mediaType === MediaType.VIDEO && post.platform === Platform.YOUTUBE
             ? post.url
@@ -98,13 +149,30 @@ async function exportMockData() {
         }
       })
 
+      if (pinnedYouTube) {
+        const mediaUrl = pinnedYouTube.url
+        items.unshift({
+          id: pinnedYouTube.platformPostId || pinnedYouTube.id,
+          timestamp: pinnedYouTube.postedAt,
+          source: pinnedYouTube.authorHandle || `${pinnedYouTube.platform} User`,
+          sourceUrl: pinnedYouTube.url,
+          content: pinnedYouTube.text || '',
+          mediaType: raw(`${JSON.stringify(mediaTypeMap[pinnedYouTube.mediaType])} as const`),
+          mediaUrl,
+        })
+      }
+
+      const uniqueItems = Array.from(
+        new Map(items.map((item) => [item.id, item])).values()
+      )
+
       return [event.slug, {
         title: event.title,
-        startDate: event.startsAt,
-        endDate: event.endsAt ?? undefined,
-        status: raw(`${JSON.stringify(getStatus(event.startsAt, event.endsAt))} as const`),
+        startDate: windowStartsAt,
+        endDate: windowEndsAt ?? undefined,
+        status: raw(`${JSON.stringify(getStatus(windowStartsAt, windowEndsAt))} as const`),
         description: event.description ?? undefined,
-        items,
+        items: uniqueItems,
         pendingLiveItems: [],
       }]
     })

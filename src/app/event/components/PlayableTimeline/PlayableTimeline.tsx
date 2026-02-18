@@ -30,14 +30,18 @@ export interface TimelineItem {
   mediaUrl?: string;
 }
 
+export type TimelineItemInput = Omit<TimelineItem, 'timestamp'> & {
+  timestamp: Date | string | number;
+};
+
 export interface PlayableTimelineProps {
   title: string;
-  startDate: Date;
-  endDate?: Date;
+  startDate: Date | string | number;
+  endDate?: Date | string | number;
   initialStatus?: 'live' | 'upcoming' | 'completed';
   description?: string;
-  initialItems: TimelineItem[];
-  pendingLiveItems?: TimelineItem[];
+  initialItems: TimelineItemInput[];
+  pendingLiveItems?: TimelineItemInput[];
 }
 
 type TimelineOrder = 'chronological' | 'reverse-chronological';
@@ -143,6 +147,10 @@ function formatDateTimeLocal(date: Date) {
     minute: '2-digit',
     hour12: true,
   }).format(date);
+}
+
+function toDate(value: Date | string | number) {
+  return value instanceof Date ? value : new Date(value);
 }
 
 function getProfileUrl(item: TimelineItem) {
@@ -362,9 +370,19 @@ function PlayerMedia({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const textPlaybackStartRef = useRef<number | null>(null);
+  const youTubeId = item?.mediaType === 'video' ? getYouTubeVideoId(item.mediaUrl) : null;
+  const isYouTube = Boolean(youTubeId);
 
   useEffect(() => {
-    if (!item || item.mediaType !== 'text') {
+    if (!isYouTube) {
+      return;
+    }
+
+    onYouTubeReadyStateChange?.(true);
+  }, [isYouTube, onYouTubeReadyStateChange]);
+
+  useEffect(() => {
+    if (!item || (item.mediaType !== 'text' && !isYouTube)) {
       onProgressChange(0, 0);
       textPlaybackStartRef.current = null;
       return;
@@ -375,10 +393,10 @@ function PlayerMedia({
     if (!isPlaying) {
       textPlaybackStartRef.current = null;
     }
-  }, [item, isPlaying, onProgressChange]);
+  }, [item, isPlaying, onProgressChange, isYouTube]);
 
   useEffect(() => {
-    if (!item || item.mediaType !== 'text' || !isPlaying) {
+    if (!item || (item.mediaType !== 'text' && !isYouTube) || !isPlaying) {
       return;
     }
 
@@ -401,10 +419,10 @@ function PlayerMedia({
       window.clearInterval(progressTimer);
       window.clearTimeout(timer);
     };
-  }, [item, isPlaying, onComplete, onPlayStateChange, onProgressChange]);
+  }, [item, isPlaying, onComplete, onPlayStateChange, onProgressChange, isYouTube]);
 
   useEffect(() => {
-    if (!item || item.mediaType !== 'text' || seekTo === null) {
+    if (!item || (item.mediaType !== 'text' && !isYouTube) || seekTo === null) {
       return;
     }
 
@@ -416,11 +434,11 @@ function PlayerMedia({
     }
 
     onSeekHandled();
-  }, [item, isPlaying, seekTo, onProgressChange, onSeekHandled]);
+  }, [item, isPlaying, seekTo, onProgressChange, onSeekHandled, isYouTube]);
 
   useEffect(() => {
     const videoElement = videoRef.current;
-    if (!videoElement || !item || item.mediaType !== 'video') {
+    if (!videoElement || !item || item.mediaType !== 'video' || isYouTube) {
       return;
     }
 
@@ -430,11 +448,11 @@ function PlayerMedia({
     }
 
     videoElement.pause();
-  }, [item, isPlaying]);
+  }, [item, isPlaying, isYouTube]);
 
   useEffect(() => {
     const videoElement = videoRef.current;
-    if (!videoElement || !item || item.mediaType !== 'video') {
+    if (!videoElement || !item || item.mediaType !== 'video' || isYouTube) {
       return;
     }
 
@@ -460,26 +478,26 @@ function PlayerMedia({
       videoElement.removeEventListener('play', onPlay);
       videoElement.removeEventListener('pause', onPause);
     };
-  }, [item, onPlayStateChange, onProgressChange]);
+  }, [item, onPlayStateChange, onProgressChange, isYouTube]);
 
   useEffect(() => {
     const videoElement = videoRef.current;
-    if (!videoElement || !item || item.mediaType !== 'video') {
+    if (!videoElement || !item || item.mediaType !== 'video' || isYouTube) {
       return;
     }
 
     videoElement.muted = isMuted;
-  }, [item, isMuted]);
+  }, [item, isMuted, isYouTube]);
 
   useEffect(() => {
     const videoElement = videoRef.current;
-    if (!videoElement || !item || item.mediaType !== 'video' || seekTo === null) {
+    if (!videoElement || !item || item.mediaType !== 'video' || seekTo === null || isYouTube) {
       return;
     }
 
     videoElement.currentTime = Math.max(0, seekTo);
     onSeekHandled();
-  }, [item, seekTo, onSeekHandled]);
+  }, [item, seekTo, onSeekHandled, isYouTube]);
 
   useEffect(() => {
     const audioElement = audioRef.current;
@@ -548,22 +566,15 @@ function PlayerMedia({
     return <p className={styles.playerContent}>No media available yet.</p>;
   }
 
-  const youtubeId = item.mediaType === 'video' ? getYouTubeVideoId(item.mediaUrl) : null;
-
-  if (item.mediaType === 'video' && youtubeId) {
+  if (item.mediaType === 'video' && youTubeId) {
     return (
       <>
-        <YouTubePlayback
-          videoId={youtubeId}
-          isPlaying={isPlaying}
-          isMuted={isMuted}
-          onPlayStateChange={onPlayStateChange}
-          onMuteStateChange={onMuteStateChange}
-          onReadyStateChange={onYouTubeReadyStateChange}
-          onProgressChange={onProgressChange}
-          seekTo={seekTo}
-          onSeekHandled={onSeekHandled}
-          onComplete={onComplete}
+        <iframe
+          className={styles.youtubePlayer}
+          src={`https://www.youtube.com/embed/${youTubeId}`}
+          title="YouTube video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
         />
         <p className={styles.playerContent}>{item.content}</p>
       </>
@@ -610,13 +621,27 @@ export function PlayableTimeline({
   initialItems,
   pendingLiveItems = [],
 }: PlayableTimelineProps) {
-  const [items, setItems] = useState<TimelineItem[]>(initialItems);
+  const normalizedStartDate = useMemo(() => toDate(startDate), [startDate]);
+  const normalizedEndDate = useMemo(
+    () => (endDate == null ? undefined : toDate(endDate)),
+    [endDate]
+  );
+  const normalizedItems = useMemo<TimelineItem[]>(
+    () => initialItems.map((item) => ({ ...item, timestamp: toDate(item.timestamp) })),
+    [initialItems]
+  );
+  const normalizedPendingLiveItems = useMemo<TimelineItem[]>(
+    () => pendingLiveItems.map((item) => ({ ...item, timestamp: toDate(item.timestamp) })),
+    [pendingLiveItems]
+  );
+
+  const [items, setItems] = useState<TimelineItem[]>(normalizedItems);
   const [liveQueueIndex, setLiveQueueIndex] = useState(0);
   const [status, setStatus] = useState<'live' | 'upcoming' | 'completed'>(
-    initialStatus ?? getEventStatus(startDate, endDate)
+    initialStatus ?? getEventStatus(normalizedStartDate, normalizedEndDate)
   );
   const [order, setOrder] = useState<TimelineOrder>(() =>
-    getInitialOrder(initialStatus ?? getEventStatus(startDate, endDate))
+    getInitialOrder(initialStatus ?? getEventStatus(normalizedStartDate, normalizedEndDate))
   );
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(0);
@@ -646,21 +671,21 @@ export function PlayableTimeline({
 
   useEffect(() => {
     const statusPoll = window.setInterval(() => {
-      const nextStatus = getEventStatus(startDate, endDate);
+      const nextStatus = getEventStatus(normalizedStartDate, normalizedEndDate);
       setStatus(nextStatus);
     }, 30000);
 
     return () => window.clearInterval(statusPoll);
-  }, [startDate, endDate]);
+  }, [normalizedStartDate, normalizedEndDate]);
 
   useEffect(() => {
-    if (status !== 'live' || pendingLiveItems.length === 0 || liveQueueIndex >= pendingLiveItems.length) {
+    if (status !== 'live' || normalizedPendingLiveItems.length === 0 || liveQueueIndex >= normalizedPendingLiveItems.length) {
       return;
     }
 
     const liveIngest = window.setInterval(() => {
       setItems((currentItems) => {
-        const nextItem = pendingLiveItems[liveQueueIndex];
+        const nextItem = normalizedPendingLiveItems[liveQueueIndex];
         if (!nextItem) {
           return currentItems;
         }
@@ -673,11 +698,11 @@ export function PlayableTimeline({
         return [...currentItems, nextItem];
       });
 
-      setLiveQueueIndex((index) => Math.min(index + 1, pendingLiveItems.length));
+      setLiveQueueIndex((index) => Math.min(index + 1, normalizedPendingLiveItems.length));
     }, LIVE_INGEST_INTERVAL_MS);
 
     return () => window.clearInterval(liveIngest);
-  }, [status, pendingLiveItems, liveQueueIndex]);
+  }, [status, normalizedPendingLiveItems, liveQueueIndex]);
 
   const hasItems = orderedItems.length > 0;
   const currentIndex = hasItems
@@ -692,8 +717,8 @@ export function PlayableTimeline({
 
   const chronologicalFirstId = chronologicalItems[0]?.id;
   const chronologicalLastId = chronologicalItems[chronologicalItems.length - 1]?.id;
-  const headerStartDate = chronologicalItems[0]?.timestamp ?? startDate;
-  const headerEndDate = chronologicalItems[chronologicalItems.length - 1]?.timestamp ?? endDate;
+  const headerStartDate = (chronologicalItems[0]?.timestamp as Date | undefined) ?? normalizedStartDate;
+  const headerEndDate = (chronologicalItems[chronologicalItems.length - 1]?.timestamp as Date | undefined) ?? normalizedEndDate;
 
   const setItemRef = useCallback((itemId: string, node: HTMLElement | null) => {
     itemRefs.current[itemId] = node;

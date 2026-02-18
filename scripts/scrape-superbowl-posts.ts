@@ -1,4 +1,7 @@
 #!/usr/bin/env tsx
+import dotenv from 'dotenv'
+dotenv.config({ path: '.env.local' })
+dotenv.config()
 /**
  * Scrape real social media posts about Super Bowl streaker incidents
  * 
@@ -23,6 +26,45 @@ import { upsertSourcePost } from '../src/lib/ingest'
 const adapter = new PrismaBetterSqlite3({ url: 'prisma/dev.db' })
 const prisma = new PrismaClient({ adapter })
 
+function isWithinEventWindow(date: Date, startsAt: Date, endsAt?: Date | null) {
+  if (date < startsAt) return false
+  if (endsAt && date > endsAt) return false
+  return true
+}
+
+function preferGeolocated<T>(posts: T[]) {
+  const geolocated = posts.filter((post) => {
+    const candidate = post as { lat?: number | null; lng?: number | null }
+    return candidate.lat != null && candidate.lng != null
+  })
+  return geolocated.length > 0 ? geolocated : posts
+}
+
+function matchesStreakerFocus(text?: string | null) {
+  if (!text) return false
+  const normalized = text.toLowerCase()
+  return [
+    'streaker',
+    'field invader',
+    'field invasion',
+    'ran onto the field',
+    'ran on the field',
+    'ran onto',
+    'ran on',
+  ].some((keyword) => normalized.includes(keyword))
+}
+
+function applyStreakerFallback<T extends { text?: string | null }>(posts: T[]) {
+  const focused = posts.filter((post) => matchesStreakerFocus(post.text))
+  return focused.length > 0 ? focused : posts
+}
+
+function getLocationRadius(radiusMeters?: number | null) {
+  if (!radiusMeters || radiusMeters <= 0) return '10km'
+  const km = Math.max(1, Math.round(radiusMeters / 1000))
+  return `${km}km`
+}
+
 async function scrapeSuperbowlPosts() {
   console.log('🏈 Starting Super Bowl post scraping...\n')
 
@@ -40,6 +82,17 @@ async function scrapeSuperbowlPosts() {
   console.log(`📍 Event: ${event.title}`)
   console.log(`📅 Date: ${event.startsAt.toISOString()}`)
   console.log(`🆔 Event ID: ${event.id}\n`)
+
+  const eventWindow = {
+    startsAt: event.startsAt,
+    endsAt: event.endsAt,
+  }
+
+  const location =
+    event.centerLat != null && event.centerLng != null
+      ? `${event.centerLat},${event.centerLng}`
+      : undefined
+  const locationRadius = getLocationRadius(event.radiusMeters)
 
   let totalPosts = 0
   const errors: string[] = []
@@ -62,18 +115,29 @@ async function scrapeSuperbowlPosts() {
         limit: 10,
         sort: 'top',
         timeFilter: 'year',
+        after: eventWindow.startsAt,
+        before: eventWindow.endsAt || undefined,
       })
 
       console.log(`  Found ${redditPosts.length} posts for "${query}"`)
 
-      for (const post of redditPosts) {
+      const redditPostData = preferGeolocated(
+        applyStreakerFallback(
+          redditPosts
+            .filter((post) =>
+              isWithinEventWindow(new Date(post.created * 1000), eventWindow.startsAt, eventWindow.endsAt)
+            )
+            .map((post) => redditPostToSourcePost(post, event.id))
+        )
+      )
+
+      for (const postData of redditPostData) {
         try {
-          const postData = redditPostToSourcePost(post, event.id)
           await upsertSourcePost(event.id, postData)
           totalPosts++
-          console.log(`  ✅ Saved: ${post.title.substring(0, 60)}...`)
+          console.log(`  ✅ Saved: ${postData.text?.substring(0, 60)}...`)
         } catch (error) {
-          const errMsg = `Failed to save Reddit post ${post.id}: ${error}`
+          const errMsg = `Failed to save Reddit post ${postData.platformPostId}: ${error}`
           errors.push(errMsg)
           console.error(`  ❌ ${errMsg}`)
         }
@@ -96,16 +160,27 @@ async function scrapeSuperbowlPosts() {
         const blueskyPosts = await searchBlueskyPosts({
           query,
           limit: 10,
+          since: eventWindow.startsAt,
+          until: eventWindow.endsAt || undefined,
         })
 
         console.log(`  Found ${blueskyPosts.length} posts for "${query}"`)
 
-        for (const post of blueskyPosts) {
+        const blueskyPostData = preferGeolocated(
+          applyStreakerFallback(
+            blueskyPosts
+              .filter((post) =>
+                isWithinEventWindow(new Date(post.record.createdAt), eventWindow.startsAt, eventWindow.endsAt)
+              )
+              .map((post) => blueskyPostToSourcePost(post, event.id))
+          )
+        )
+
+        for (const postData of blueskyPostData) {
           try {
-            const postData = blueskyPostToSourcePost(post, event.id)
             await upsertSourcePost(event.id, postData)
             totalPosts++
-            console.log(`  ✅ Saved: ${post.record.text.substring(0, 60)}...`)
+            console.log(`  ✅ Saved: ${postData.text?.substring(0, 60)}...`)
           } catch (error) {
             const errMsg = `Failed to save Bluesky post: ${error}`
             errors.push(errMsg)
@@ -132,18 +207,31 @@ async function scrapeSuperbowlPosts() {
       query: 'Super Bowl streaker',
       maxResults: 10,
       order: 'relevance',
+      location,
+      radius: location ? locationRadius : undefined,
+      publishedAfter: eventWindow.startsAt,
+      publishedBefore: eventWindow.endsAt || undefined,
     })
 
     console.log(`  Found ${youtubeVideos.length} videos`)
 
-    for (const video of youtubeVideos) {
+    const youtubePostData = preferGeolocated(
+      applyStreakerFallback(
+        youtubeVideos
+          .filter((video) =>
+            isWithinEventWindow(new Date(video.publishedAt), eventWindow.startsAt, eventWindow.endsAt)
+          )
+          .map((video) => youtubeVideoToSourcePost(video, event.id))
+      )
+    )
+
+    for (const postData of youtubePostData) {
       try {
-        const postData = youtubeVideoToSourcePost(video, event.id)
         await upsertSourcePost(event.id, postData)
         totalPosts++
-        console.log(`  ✅ Saved: ${video.title.substring(0, 60)}...`)
+        console.log(`  ✅ Saved: ${postData.text?.substring(0, 60)}...`)
       } catch (error) {
-        const errMsg = `Failed to save YouTube video ${video.id}: ${error}`
+        const errMsg = `Failed to save YouTube video ${postData.platformPostId}: ${error}`
         errors.push(errMsg)
         console.error(`  ❌ ${errMsg}`)
       }

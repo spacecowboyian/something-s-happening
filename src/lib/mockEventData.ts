@@ -4,145 +4,19 @@
 export const mockEventData = {
   "superbowl-lx-2026": {
     "title": "Super Bowl LX 2026",
-    "startDate": new Date('2026-02-09T01:30:00.000Z'),
-    "endDate": new Date('2026-02-09T05:00:00.000Z'),
+    "startDate": new Date('2026-02-09T03:45:00.000Z'),
+    "endDate": new Date('2026-02-09T04:45:00.000Z'),
     "status": "completed" as const,
     "description": "Super Bowl LX at Levi's Stadium - An unforgettable game with an unexpected fourth quarter interruption",
     "items": [
       {
-        "id": "1itltt5",
-        "timestamp": new Date('2025-02-20T00:52:22.000Z'),
-        "source": "u/mcgillhufflepuff",
-        "sourceUrl": "https://reddit.com/r/Fauxmoi/comments/1itltt5/former_nfl_player_chris_kluwe_was_arrested/",
-        "content": "Former NFL player Chris Kluwe was arrested following him protesting a city council meeting where Republican council members in Huntington Beach, California wanted to put up a plaque that spells out MAGA.",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1itrga3",
-        "timestamp": new Date('2025-02-20T05:49:30.000Z'),
-        "source": "u/Mycalescott",
-        "sourceUrl": "https://reddit.com/r/law/comments/1itrga3/former_nfl_player_chris_kluwe_criticizes_trump/",
-        "content": "Former NFL player Chris Kluwe criticizes Trump and MAGA at a California city council meeting and is arrested--he nailed it",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1iu5ui0",
-        "timestamp": new Date('2025-02-20T18:41:38.000Z'),
-        "source": "u/Da_Fish",
-        "sourceUrl": "https://reddit.com/r/news/comments/1iu5ui0/former_nfl_player_chris_kluwe_arrested_after/",
-        "content": "Former NFL player Chris Kluwe arrested after attacking ‘corrupt’ Maga movement | NFL",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1iuamju",
-        "timestamp": new Date('2025-02-20T21:58:30.000Z'),
-        "source": "u/Cleonce12",
-        "sourceUrl": "https://reddit.com/r/BlackPeopleTwitter/comments/1iuamju/yet_travis_kelce_said_it_would_be_an_honor_when/",
-        "content": "yet Travis Kelce said “ it would be an honor” when being asked about playing football with Trump in attendance",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1iuovjq",
-        "timestamp": new Date('2025-02-21T11:37:40.000Z'),
-        "source": "u/OrganicA1Bullsteak",
-        "sourceUrl": "https://reddit.com/r/pics/comments/1iuovjq/former_nflplayer_chris_kluwe_arrested_after_maga/",
-        "content": "Former NFL-Player Chris Kluwe arrested after MAGA protest during a city council meeting",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1iuvlf7",
-        "timestamp": new Date('2025-02-21T16:55:48.000Z'),
-        "source": "u/CrispyMiner",
-        "sourceUrl": "https://reddit.com/r/inthenews/comments/1iuvlf7/nfl_star_arrested_over_maga_protest_continues_to/",
-        "content": "NFL Star Arrested Over MAGA Protest Continues to Trash Trump After Release",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1iuy3o9",
-        "timestamp": new Date('2025-02-21T18:36:25.000Z'),
-        "source": "u/reflibman",
-        "sourceUrl": "https://reddit.com/r/Libraries/comments/1iuy3o9/nfl_star_arrested_over_maga_library_protest/",
-        "content": "NFL Star Arrested Over MAGA Library Protest Continues to Trash Trump After Release",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1m61gvy",
-        "timestamp": new Date('2025-07-22T01:46:25.000Z'),
-        "source": "u/T_Shurt",
-        "sourceUrl": "https://reddit.com/r/NoShitSherlock/comments/1m61gvy/trump_is_trying_to_distract_from_epstein_by/",
-        "content": "Trump is Trying to Distract From Epstein by Talking About Everything But That - From Changing NFL Team's Name, Arresting Obama, End to Cashless Bail: “Trump is scared to death of the Epstein files.\"",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1qmkci5",
-        "timestamp": new Date('2026-01-25T14:21:27.000Z'),
-        "source": "u/PudgyBonestld",
-        "sourceUrl": "https://reddit.com/r/nfl/comments/1qmkci5/when_49ers_hc_kyle_shanahan_got_arrested/",
-        "content": "When 49ers HC Kyle Shanahan Got Arrested Defending Raheem Morris at 2005 NFL Combine",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1qrk4vd",
-        "timestamp": new Date('2026-01-30T22:25:07.000Z'),
-        "source": "u/Drexlore",
-        "sourceUrl": "https://reddit.com/r/nfl/comments/1qrk4vd/covucci_the_day_after_nfl_owner_robert_kraft_was/",
-        "content": "[Covucci] The day after NFL owner Robert Kraft was arrested on solicitation at a massage parlor, Jeffrey Epstein was texting about the case with \"Jack,\" who mentioned the law firm that Kraft eventually went with for his defense. In it, Epstein mentions a \"past issue\" that may come to light.",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1qvqiuf",
-        "timestamp": new Date('2026-02-04T14:49:19.000Z'),
-        "source": "u/RollSafer",
-        "sourceUrl": "https://reddit.com/r/news/comments/1qvqiuf/kid_rocks_song_about_loving_underage_girls/",
-        "content": "Kid Rock’s song about loving underage girls resurfaces ahead of TPUSA Super Bowl show",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1qzqyue",
-        "timestamp": new Date('2026-02-09T01:34:26.000Z'),
-        "source": "u/nbcnews",
-        "sourceUrl": "https://reddit.com/r/pics/comments/1qzqyue/oc_bad_bunny_takes_the_stage_for_the_super_bowl/",
-        "content": "OC: Bad Bunny takes the stage for the Super Bowl halftime show",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1qzqywa",
-        "timestamp": new Date('2026-02-09T01:34:31.000Z'),
-        "source": "u/handlit33",
-        "sourceUrl": "https://reddit.com/r/Fauxmoi/comments/1qzqywa/bad_bunnys_super_bowl_halftime_show_performance/",
-        "content": "Bad Bunny's Super Bowl Halftime Show Performance",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1qzs494",
-        "timestamp": new Date('2026-02-09T02:31:08.000Z'),
-        "source": "u/Mr-Night-Owl",
-        "sourceUrl": "https://reddit.com/r/MadeMeSmile/comments/1qzs494/a_couple_who_invited_bad_bunny_to_their_wedding/",
-        "content": "A couple who invited Bad Bunny to their wedding were, in turn, invited by him to get married during his halftime show performance during Super Bowl LX",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1qzt6xx",
-        "timestamp": new Date('2026-02-09T03:22:19.000Z'),
-        "source": "u/yikesamerica",
-        "sourceUrl": "https://reddit.com/r/Fauxmoi/comments/1qzt6xx/the_only_super_bowl_halftime_show_opinion_that/",
-        "content": "The only Super Bowl halftime show opinion that mattered",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
+        "id": "q57g0kAlXY0",
+        "timestamp": new Date('2026-02-09T02:42:24.000Z'),
+        "source": "Leasure Trading Company",
+        "sourceUrl": "https://www.youtube.com/watch?v=q57g0kAlXY0",
+        "content": "Streaker fan Alex Gonzalez runs onto field and tackled by security during NFL Super Bowl LX",
+        "mediaType": "video" as const,
+        "mediaUrl": "https://www.youtube.com/watch?v=q57g0kAlXY0"
       },
       {
         "id": "sb-streaker-1",
@@ -159,15 +33,6 @@ export const mockEventData = {
         "source": "@SportsCenter",
         "sourceUrl": "https://x.com/SportsCenter/status/1758234589123",
         "content": "BREAKING: Play has been stopped at Super Bowl LX after a streaker ran onto the field with 12:54 remaining in the 4th quarter",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "sb-reddit-1",
-        "timestamp": new Date('2026-02-09T04:10:00.000Z'),
-        "source": "u/FootballFan2026",
-        "sourceUrl": "https://reddit.com/r/nfl/comments/superbowl_streaker",
-        "content": "Did that really just happen? Someone streaked across the field during the biggest game of the year. Security took like 30 seconds to catch them 😂",
         "mediaType": "text" as const,
         "mediaUrl": undefined
       },
@@ -199,15 +64,6 @@ export const mockEventData = {
         "mediaUrl": undefined
       },
       {
-        "id": "sb-reddit-2",
-        "timestamp": new Date('2026-02-09T04:22:00.000Z'),
-        "source": "u/SuperBowlWatcher",
-        "sourceUrl": "https://reddit.com/r/sports/comments/sb_lx_streaker_vid",
-        "content": "The CBS broadcast cut away so fast but you could still hear the crowd going WILD. This is going to be legendary",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
         "id": "sb-streaker-5",
         "timestamp": new Date('2026-02-09T04:25:00.000Z'),
         "source": "@TotalProSports",
@@ -223,123 +79,6 @@ export const mockEventData = {
         "sourceUrl": "https://x.com/barstoolsports/status/1758234645678",
         "content": "That streaker just paid $5000 for a stadium ban and internet immortality. Worth it tbh",
         "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "sb-streaker-7",
-        "timestamp": new Date('2026-02-09T05:15:00.000Z'),
-        "source": "@SportsNation",
-        "sourceUrl": "https://x.com/SportsNation/status/1758234667890",
-        "content": "In a game that will be remembered for an incredible comeback, somehow we're all still talking about the streaker",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "sb-bsky-2",
-        "timestamp": new Date('2026-02-09T05:30:00.000Z'),
-        "source": "@nflnews.bsky.social",
-        "sourceUrl": "https://bsky.app/profile/nflnews.bsky.social/post/def456",
-        "content": "Security at Levi's Stadium has confirmed the streaker has been arrested and will face trespassing charges. Fine estimated at $5,000+",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "sb-streaker-8",
-        "timestamp": new Date('2026-02-09T05:45:00.000Z'),
-        "source": "@NFL",
-        "sourceUrl": "https://x.com/NFL/status/1758234689012",
-        "content": "Despite the disruption, Super Bowl LX delivered an instant classic. What a game! 🏈",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "sb-reddit-3",
-        "timestamp": new Date('2026-02-09T06:10:00.000Z'),
-        "source": "u/MVPStreaker",
-        "sourceUrl": "https://reddit.com/r/SuperBowl/comments/streaker_video_mirror",
-        "content": "Mirror: Super Bowl LX Streaker Full Video (CBS tried to cut away but international feed caught it all)",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "sb-streaker-9",
-        "timestamp": new Date('2026-02-09T06:25:00.000Z'),
-        "source": "@TheScore",
-        "sourceUrl": "https://x.com/TheScore/status/1758234712345",
-        "content": "\"Streaker at Super Bowl\" is trending #1 worldwide. Over 2 million tweets in the last 2 hours",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "sb-streaker-10",
-        "timestamp": new Date('2026-02-09T06:45:00.000Z'),
-        "source": "@SInow",
-        "sourceUrl": "https://x.com/SInow/status/1758234734567",
-        "content": "Sources: The Super Bowl streaker is a 23-year-old from San Jose who allegedly bet friends he would do it. He won the bet but lost his freedom (temporarily)",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "sb-bsky-3",
-        "timestamp": new Date('2026-02-09T07:15:00.000Z'),
-        "source": "@comedian.bsky.social",
-        "sourceUrl": "https://bsky.app/profile/comedian.bsky.social/post/ghi789",
-        "content": "Imagine paying $10,000 for Super Bowl tickets just to get arrested for streaking. That's commitment to the bit 😂",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "sb-streaker-11",
-        "timestamp": new Date('2026-02-09T07:50:00.000Z'),
-        "source": "@espn",
-        "sourceUrl": "https://x.com/espn/status/1758234756789",
-        "content": "Super Bowl LX will go down in history for many reasons. The streaker incident will definitely be one of them. Full recap coming on SportsCenter",
-        "mediaType": "text" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1r02m3n",
-        "timestamp": new Date('2026-02-09T12:13:35.000Z'),
-        "source": "u/pinkfloydfan101",
-        "sourceUrl": "https://reddit.com/r/popculturechat/comments/1r02m3n/bad_bunny_has_smashed_the_record_for_the_most/",
-        "content": "Bad Bunny has smashed the record for the most watched Super Bowl Halftime Show in history with 135.4 MILLION views",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1r07pxb",
-        "timestamp": new Date('2026-02-09T15:49:19.000Z'),
-        "source": "u/Plastic_Many393",
-        "sourceUrl": "https://reddit.com/r/interestingasfuck/comments/1r07pxb/hundreds_of_private_jets_departed_the_bay_area/",
-        "content": "Hundreds of private jets departed the Bay Area immediately after the Super Bowl ended",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1r0imza",
-        "timestamp": new Date('2026-02-09T22:22:54.000Z'),
-        "source": "u/teaNcrumpets20",
-        "sourceUrl": "https://reddit.com/r/pics/comments/1r0imza/oc_happy_sugar_cane_at_the_super_bowl/",
-        "content": "OC: Happy Sugar Cane at the Super Bowl",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1r0jrz9",
-        "timestamp": new Date('2026-02-09T23:06:32.000Z'),
-        "source": "u/adamtots_remastered",
-        "sourceUrl": "https://reddit.com/r/comics/comments/1r0jrz9/halftime_oc/",
-        "content": "Halftime [OC]",
-        "mediaType": "image" as const,
-        "mediaUrl": undefined
-      },
-      {
-        "id": "1r1e2uz",
-        "timestamp": new Date('2026-02-10T21:39:09.000Z'),
-        "source": "u/Flat_Suggestion7545",
-        "sourceUrl": "https://reddit.com/r/agedlikewine/comments/1r1e2uz/solid/",
-        "content": "Solid.",
-        "mediaType": "image" as const,
         "mediaUrl": undefined
       }
     ],
