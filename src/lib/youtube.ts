@@ -2,7 +2,7 @@
  * YouTube Data API v3 Integration
  * 
  * This module provides utilities for fetching YouTube videos for events.
- * Requires YOUTUBE_API_KEY in environment variables.
+ * Requires NEXT_PUBLIC_YOUTUBE_API_KEY in environment variables.
  * 
  * Get your API key: https://console.cloud.google.com/
  * Enable: YouTube Data API v3
@@ -121,10 +121,10 @@ export function youtubeVideoToSourcePost(video: YouTubeVideo, eventId: string) {
 export async function searchYouTubeVideos(
   params: YouTubeSearchParams
 ): Promise<YouTubeVideo[]> {
-  const apiKey = process.env.YOUTUBE_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
   
   if (!apiKey) {
-    console.warn('⚠️  YOUTUBE_API_KEY not set in environment variables');
+    console.warn('⚠️  NEXT_PUBLIC_YOUTUBE_API_KEY not set in environment variables');
     console.warn('Get your key from: https://console.cloud.google.com/');
     return [];
   }
@@ -208,10 +208,10 @@ export async function searchYouTubeVideos(
  * More efficient than multiple search requests (1 unit vs 100 units)
  */
 export async function getVideoDetails(videoIds: string[]): Promise<YouTubeVideo[]> {
-  const apiKey = process.env.YOUTUBE_API_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
   
   if (!apiKey) {
-    console.warn('⚠️  YOUTUBE_API_KEY not set');
+    console.warn('⚠️  NEXT_PUBLIC_YOUTUBE_API_KEY not set');
     return [];
   }
 
@@ -296,7 +296,7 @@ export async function searchEventVideos(event: {
  * Check if YouTube API key is configured
  */
 export function isYouTubeConfigured(): boolean {
-  return !!process.env.YOUTUBE_API_KEY;
+  return !!process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 }
 
 /**

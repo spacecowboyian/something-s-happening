@@ -30,7 +30,7 @@ Create or update `.env` file in your project root:
 
 ```bash
 DATABASE_URL="file:./dev.db"
-YOUTUBE_API_KEY="AIzaSy...your-key-here"
+NEXT_PUBLIC_YOUTUBE_API_KEY="AIzaSy...your-key-here"
 ```
 
 **Important**: Never commit your API key to git! The `.env` file is already in `.gitignore`.

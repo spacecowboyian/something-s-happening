@@ -94,6 +94,8 @@ jobs:
       - name: Build with Next.js
         env:
           NEXT_PUBLIC_BASE_PATH: /${{ env.REPO_NAME }}/pr-${{ steps.pr.outputs.number }}
+          # Inject YouTube API key for client-side access
+          NEXT_PUBLIC_YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
 
       - name: Deploy to GitHub Pages

@@ -13,7 +13,7 @@
 5. **Copy** the key (starts with `AIza...`)
 6. **Add to `.env`**:
    ```bash
-   YOUTUBE_API_KEY="AIzaSy...your-key-here"
+   NEXT_PUBLIC_YOUTUBE_API_KEY="AIzaSy...your-key-here"
    ```
 
 ## Cost: FREE Forever! 💰
@@ -27,7 +27,7 @@
 
 ```bash
 # 1. Add your API key to .env
-echo 'YOUTUBE_API_KEY="your-key-here"' >> .env
+echo 'NEXT_PUBLIC_YOUTUBE_API_KEY="your-key-here"' >> .env
 
 # 2. Test the integration
 npm run test:youtube

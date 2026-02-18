@@ -43,7 +43,7 @@ This guide explains how to get API credentials for all supported social media pl
 
 4. **Add to .env**
    ```bash
-   YOUTUBE_API_KEY="AIzaSy...your-key-here"
+   NEXT_PUBLIC_YOUTUBE_API_KEY="AIzaSy...your-key-here"
    ```
 
 ### Rate Limits

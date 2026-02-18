@@ -89,6 +89,11 @@ jobs:
           fi
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        env:
+          # Inject YouTube API key for client-side access
+          # Note: This key will be bundled into JavaScript and visible in browser
+          # Set YOUTUBE_API_KEY in repository secrets (Settings > Secrets and variables > Actions)
+          NEXT_PUBLIC_YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
