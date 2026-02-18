@@ -57,6 +57,26 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `npm run db:push` - Push Prisma schema to the database
 - `npm run db:seed` - Seed the database with sample data
 - `npm run test:youtube` - Test YouTube API integration
+- `npm run release` - Generate changelog and create a release (uses standard-version)
+
+## Contributing
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/) for commit messages. See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
+
+### Commit Message Format
+
+All commit messages must follow this format:
+
+```
+<type>(<scope>): <description>
+```
+
+**Examples:**
+- `feat(api): add event search endpoint`
+- `fix(ui): correct navigation alignment`
+- `docs: update README with contribution guidelines`
+
+Commit messages are automatically validated using commitlint and husky git hooks.
 
 ## Development Workflow
 
