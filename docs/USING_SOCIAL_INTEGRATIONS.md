@@ -212,21 +212,18 @@ Each platform module (`youtube.ts`, `bluesky.ts`, `reddit.ts`, etc.) exports:
    - `searchBlueskyPosts(params)`
    - `searchRedditPosts(params)`
    - `searchXTweets(params)` (if configured)
-   - `getInstagramBusinessPosts(userId)` (if configured)
 
 2. **Converter function** - Convert to SourcePost format
    - `youtubeVideoToSourcePost(video, eventId)`
    - `blueskyPostToSourcePost(post, eventId)`
    - `redditPostToSourcePost(post, eventId)`
    - `xTweetToSourcePost(tweet, eventId)`
-   - `instagramPostToSourcePost(post, eventId)`
 
 3. **Config check** - Check if API is configured
    - `isYouTubeConfigured()`
    - `isBlueskyConfigured()` (always true)
    - `isRedditConfigured()` (always true)
    - `isXConfigured()`
-   - `isInstagramConfigured()`
 
 ---
 
@@ -278,11 +275,6 @@ The database schema (Prisma) automatically:
 - $100/month for 10,000 tweets
 - Basic plan has low limits
 - Consider alternatives
-
-### Instagram (if using)
-- 200 calls/hour per user
-- Only your business account
-- Very limited search
 
 ---
 

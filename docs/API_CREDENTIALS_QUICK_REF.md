@@ -54,36 +54,7 @@ REDDIT_USER_AGENT="something-s-happening/0.1"
 
 ### ⚠️ Priority 2: More Complex
 
-#### 4. Instagram (If You Have a Business Account)
-**Cost:** FREE  
-**Time:** 30 minutes  
-**Get from:** https://developers.facebook.com/
-
-**What you need:**
-- `INSTAGRAM_ACCESS_TOKEN` - Long token string
-- `INSTAGRAM_USER_ID` - Your Instagram Business user ID
-
-**Limitations:**
-- Only works with Instagram Business accounts
-- Cannot search public posts
-- Can only access your own business account posts
-
-**Steps:**
-1. Create Facebook Developer account
-2. Create app with Instagram Graph API
-3. Link Instagram Business account
-4. Generate access token
-5. Get your user ID
-
-**Add to `.env`:**
-```bash
-INSTAGRAM_ACCESS_TOKEN="IGQVx..."
-INSTAGRAM_USER_ID="17841..."
-```
-
----
-
-#### 5. X / Twitter (NOT RECOMMENDED - Paid Only)
+#### 4. X / Twitter (NOT RECOMMENDED - Paid Only)
 **Cost:** $100/month minimum  
 **Time:** 15 minutes  
 **Get from:** https://developer.twitter.com/
@@ -156,11 +127,9 @@ npm run dev
 | **YouTube** | ✅ Yes | $0 | 5 min | [Google Cloud](https://console.cloud.google.com/) |
 | **Bluesky** | ❌ No | $0 | 0 min | N/A (public API) |
 | **Reddit** | ❌ No* | $0 | 1 min | N/A (public API) |
-| **Instagram** | ✅ Yes | $0** | 30 min | [FB Developers](https://developers.facebook.com/) |
 | **X/Twitter** | ✅ Yes | $100/mo | 15 min | [Twitter Devs](https://developer.twitter.com/) |
 
-\* Just needs user agent string  
-\** Free but very limited (business accounts only)
+\* Just needs user agent string
 
 ---
 
@@ -169,7 +138,6 @@ npm run dev
 1. Get YouTube API key (5 min, most important)
 2. Add Reddit user agent (30 sec)
 3. Test with mock event data
-4. Decide if you need Instagram (only if you have business account)
-5. Skip X/Twitter unless you really need it ($100/month)
+4. Skip X/Twitter unless you really need it ($100/month)
 
 For detailed step-by-step instructions, see: `docs/SOCIAL_API_SETUP.md`

@@ -10,10 +10,8 @@ This guide explains how to get API credentials for all supported social media pl
 | **Bluesky** | ❌ No | 🆓 FREE | Public API (no auth needed) |
 | **Reddit** | ❌ No* | 🆓 FREE | Public API (optional auth) |
 | **X (Twitter)** | ✅ Yes | 💰 $100/month | [Twitter Developer Portal](https://developer.twitter.com/) |
-| **Instagram** | ✅ Yes | 🆓 FREE** | [Facebook Developers](https://developers.facebook.com/) |
 
-\* Reddit works without auth but has lower rate limits  
-\** Instagram Graph API is free but has significant limitations
+\* Reddit works without auth but has lower rate limits
 
 ---
 
@@ -175,65 +173,14 @@ If you need higher rate limits:
 
 ---
 
-## 5. Instagram (LIMITED - BUSINESS ONLY ⚠️)
-
-### Why Instagram is Difficult
-- ⚠️ Only works with Instagram **Business** accounts
-- ⚠️ Cannot search public posts
-- ⚠️ Cannot access personal accounts
-- ⚠️ Requires Facebook Developer setup
-
-### If You Have a Business Account
-
-1. **Create Facebook Developer Account**
-   - Go to [Facebook Developers](https://developers.facebook.com/)
-   - Create an account
-
-2. **Create an App**
-   - Click "Create App"
-   - Select "Business" type
-   - Add "Instagram Graph API"
-
-3. **Link Instagram Business Account**
-   - Go to App Settings
-   - Link your Instagram Business account
-
-4. **Generate Access Token**
-   - Use Graph API Explorer
-   - Get user access token with `instagram_basic` permissions
-
-5. **Get User ID**
-   - Query: `me?fields=id,username`
-   - Copy the Instagram User ID
-
-6. **Add to .env**
-   ```bash
-   INSTAGRAM_ACCESS_TOKEN="IGQV..."
-   INSTAGRAM_USER_ID="17841..."
-   ```
-
-### Limitations
-- ✅ Can access: Your business account posts
-- ❌ Cannot access: Other accounts, public search
-- ❌ No location search without location IDs
-- ❌ Limited hashtag search
-
-### Alternatives
-- Use Instagram's embed API for specific posts
-- Manual collection with proper attribution
-- Partner with content creators who give API access
-
----
-
-## Recommended Priority
+## 5. X / Twitter (PAID - NOT RECOMMENDED ⚠️)
 
 For MVP and best developer experience:
 
 1. **✅ YouTube** (5 min setup, free, powerful search)
 2. **✅ Bluesky** (0 min setup, free, no auth)
 3. **✅ Reddit** (1 min setup, free, no auth)
-4. **⚠️ Instagram** (30 min setup, free but limited)
-5. **❌ X/Twitter** (avoid unless you need it - $100/month)
+4. **❌ X/Twitter** (avoid unless you need it - $100/month)
 
 ---
 
@@ -277,7 +224,6 @@ console.log('Reddit:', isRedditConfigured());
 | YouTube | $0 | ✅ Yes | 10,000 units/day |
 | Bluesky | $0 | ✅ Yes | Unlimited |
 | Reddit | $0 | ✅ Yes | 60 req/min |
-| Instagram | $0 | ✅ Yes | 200 req/hour |
 | X/Twitter | $100 | ❌ No | 10k tweets/month |
 
 **Total for MVP (without Twitter): $0/month** 🎉
@@ -296,5 +242,4 @@ For implementation details, see:
 - `src/lib/youtube.ts` - YouTube integration
 - `src/lib/bluesky.ts` - Bluesky integration
 - `src/lib/reddit.ts` - Reddit integration
-- `src/lib/instagram.ts` - Instagram integration
 - `src/lib/x-twitter.ts` - X/Twitter integration
