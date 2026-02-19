@@ -115,18 +115,16 @@ async function scrapeSuperbowlPosts() {
         limit: 10,
         sort: 'top',
         timeFilter: 'year',
-        after: eventWindow.startsAt,
-        before: eventWindow.endsAt || undefined,
+        // Don't filter by event window - we want historical posts
+        // since this is a demo script for a future event
       })
 
       console.log(`  Found ${redditPosts.length} posts for "${query}"`)
 
+      // Apply streaker focus filter and prefer geolocated posts
       const redditPostData = preferGeolocated(
         applyStreakerFallback(
           redditPosts
-            .filter((post) =>
-              isWithinEventWindow(new Date(post.created * 1000), eventWindow.startsAt, eventWindow.endsAt)
-            )
             .map((post) => redditPostToSourcePost(post, event.id))
         )
       )
@@ -160,8 +158,7 @@ async function scrapeSuperbowlPosts() {
         const blueskyPosts = await searchBlueskyPosts({
           query,
           limit: 10,
-          since: eventWindow.startsAt,
-          until: eventWindow.endsAt || undefined,
+          // Don't filter by event window - we want historical posts
         })
 
         console.log(`  Found ${blueskyPosts.length} posts for "${query}"`)
@@ -169,9 +166,6 @@ async function scrapeSuperbowlPosts() {
         const blueskyPostData = preferGeolocated(
           applyStreakerFallback(
             blueskyPosts
-              .filter((post) =>
-                isWithinEventWindow(new Date(post.record.createdAt), eventWindow.startsAt, eventWindow.endsAt)
-              )
               .map((post) => blueskyPostToSourcePost(post, event.id))
           )
         )
@@ -209,8 +203,7 @@ async function scrapeSuperbowlPosts() {
       order: 'relevance',
       location,
       radius: location ? locationRadius : undefined,
-      publishedAfter: eventWindow.startsAt,
-      publishedBefore: eventWindow.endsAt || undefined,
+      // Don't filter by event window - we want historical videos
     })
 
     console.log(`  Found ${youtubeVideos.length} videos`)
@@ -218,9 +211,6 @@ async function scrapeSuperbowlPosts() {
     const youtubePostData = preferGeolocated(
       applyStreakerFallback(
         youtubeVideos
-          .filter((video) =>
-            isWithinEventWindow(new Date(video.publishedAt), eventWindow.startsAt, eventWindow.endsAt)
-          )
           .map((video) => youtubeVideoToSourcePost(video, event.id))
       )
     )
