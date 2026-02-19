@@ -1,6 +1,7 @@
 import { prisma } from './db'
 import { SourcePost, Platform, MediaType } from '@prisma/client'
 import type { TimelineItem } from '@/app/event/components/PlayableTimeline/PlayableTimeline'
+import { getYouTubeVideoId } from './youtube-client'
 
 export async function upsertSourcePost(
   eventId: string,
@@ -62,8 +63,11 @@ export function sourcePostToTimelineItem(post: SourcePost): TimelineItem {
   // Determine mediaUrl based on platform and mediaType
   let mediaUrl: string | undefined
   if (post.mediaType === MediaType.VIDEO && post.platform === Platform.YOUTUBE) {
-    // YouTube videos use the URL as the mediaUrl
-    mediaUrl = post.url
+    // YouTube videos: extract video ID and use it for embedding
+    const videoId = getYouTubeVideoId(post.url)
+    if (videoId) {
+      mediaUrl = post.url
+    }
   }
 
   return {

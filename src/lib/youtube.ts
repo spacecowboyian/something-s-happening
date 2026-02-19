@@ -1,8 +1,10 @@
 /**
- * YouTube Data API v3 Integration
+ * YouTube Data API v3 Integration (SERVER-ONLY)
  * 
- * This module provides utilities for fetching YouTube videos for events.
- * Requires NEXT_PUBLIC_YOUTUBE_API_KEY in environment variables.
+ * This module provides SERVER-SIDE utilities for fetching YouTube videos for events.
+ * ⚠️ DO NOT import this module in client components - use youtube-client.ts instead
+ * 
+ * Requires YOUTUBE_API_KEY in environment variables (server-side only).
  * 
  * Get your API key: https://console.cloud.google.com/
  * Enable: YouTube Data API v3
@@ -50,31 +52,8 @@ interface YouTubeAPIVideoItem {
   };
 }
 
-/**
- * Extracts the YouTube video ID from various YouTube URL formats
- * @param url - The YouTube URL to parse
- * @returns The video ID if found, null otherwise
- */
-export function getYouTubeVideoId(url?: string): string | null {
-  if (!url) {
-    return null;
-  }
-
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=)([A-Za-z0-9_-]{11})/,
-    /(?:youtu\.be\/)([A-Za-z0-9_-]{11})/,
-    /(?:youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match?.[1]) {
-      return match[1];
-    }
-  }
-
-  return null;
-}
+// Re-export client-safe utilities from youtube-client
+export { getYouTubeVideoId, getYouTubeThumbnail, getYouTubeEmbedUrl } from './youtube-client';
 
 export interface YouTubeSearchParams {
   query: string;
@@ -117,14 +96,15 @@ export function youtubeVideoToSourcePost(video: YouTubeVideo, eventId: string) {
 
 /**
  * Search for YouTube videos based on criteria
+ * ⚠️ SERVER-SIDE ONLY - Uses YOUTUBE_API_KEY
  */
 export async function searchYouTubeVideos(
   params: YouTubeSearchParams
 ): Promise<YouTubeVideo[]> {
-  const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+  const apiKey = process.env.YOUTUBE_API_KEY;
   
   if (!apiKey) {
-    console.warn('⚠️  NEXT_PUBLIC_YOUTUBE_API_KEY not set in environment variables');
+    console.warn('⚠️  YOUTUBE_API_KEY not set in environment variables');
     console.warn('Get your key from: https://console.cloud.google.com/');
     return [];
   }
@@ -206,12 +186,13 @@ export async function searchYouTubeVideos(
 /**
  * Get detailed information about specific videos
  * More efficient than multiple search requests (1 unit vs 100 units)
+ * ⚠️ SERVER-SIDE ONLY - Uses YOUTUBE_API_KEY
  */
 export async function getVideoDetails(videoIds: string[]): Promise<YouTubeVideo[]> {
-  const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+  const apiKey = process.env.YOUTUBE_API_KEY;
   
   if (!apiKey) {
-    console.warn('⚠️  NEXT_PUBLIC_YOUTUBE_API_KEY not set');
+    console.warn('⚠️  YOUTUBE_API_KEY not set');
     return [];
   }
 
@@ -296,7 +277,7 @@ export async function searchEventVideos(event: {
  * Check if YouTube API key is configured
  */
 export function isYouTubeConfigured(): boolean {
-  return !!process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+  return !!process.env.YOUTUBE_API_KEY;
 }
 
 /**

@@ -9,7 +9,7 @@ import {
   faVolumeHigh,
 } from '@fortawesome/free-solid-svg-icons';
 import { faSoundcloud, faXTwitter, faYoutube } from '@fortawesome/free-brands-svg-icons';
-import { getYouTubeVideoId } from '@/lib/youtube';
+import { getYouTubeVideoId, getYouTubeThumbnail } from '@/lib/youtube-client';
 import styles from './MomentCard.module.css';
 import tooltipStyles from '@/components/Tooltip/Tooltip.module.css';
 
@@ -98,15 +98,15 @@ function MomentCardImpl({
   };
 
   const youtubeId = mediaType === 'video' ? getYouTubeVideoId(mediaUrl) : null;
-  const youtubeThumbnail = youtubeId
-    ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
-    : null;
+  const youtubeThumbnail = youtubeId ? getYouTubeThumbnail(youtubeId) : null;
   const timelineIcon = getTimelineIcon(mediaType, sourceUrl);
   const markerTooltip = isStartMoment
     ? 'Start of event timeline'
     : isEndMoment
       ? 'End of completed event timeline'
-      : undefined;
+      : isActive
+        ? 'Currently playing moment'
+        : undefined;
 
   return (
     <AriaButton
