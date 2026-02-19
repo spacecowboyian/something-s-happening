@@ -12,7 +12,7 @@ Here's exactly what credentials you need to fetch for each platform:
 **Get from:** https://console.google.com/
 
 **What you need:**
-- `NEXT_PUBLIC_YOUTUBE_API_KEY` - Single API key string (exposed in browser)
+- `YOUTUBE_API_KEY` - Single API key string (server-side only, not exposed in browser)
 
 **Steps:**
 1. Create Google Cloud project
@@ -22,7 +22,7 @@ Here's exactly what credentials you need to fetch for each platform:
 
 **Add to `.env`:**
 ```bash
-NEXT_PUBLIC_YOUTUBE_API_KEY="AIzaSy...your-key-here"
+YOUTUBE_API_KEY="AIzaSy...your-key-here"
 ```
 
 ---

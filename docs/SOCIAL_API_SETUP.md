@@ -9,7 +9,6 @@ This guide explains how to get API credentials for all supported social media pl
 | **YouTube** | ✅ Yes | 🆓 FREE | [Google Cloud Console](https://console.cloud.google.com/) |
 | **Bluesky** | ❌ No | 🆓 FREE | Public API (no auth needed) |
 | **Reddit** | ❌ No* | 🆓 FREE | Public API (optional auth) |
-| **X (Twitter)** | ✅ Yes | 💰 $100/month | [Twitter Developer Portal](https://developer.twitter.com/) |
 
 \* Reddit works without auth but has lower rate limits
 
@@ -43,7 +42,7 @@ This guide explains how to get API credentials for all supported social media pl
 
 4. **Add to .env**
    ```bash
-   NEXT_PUBLIC_YOUTUBE_API_KEY="AIzaSy...your-key-here"
+   YOUTUBE_API_KEY="AIzaSy...your-key-here"
    ```
 
 ### Rate Limits

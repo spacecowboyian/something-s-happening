@@ -141,7 +141,7 @@ async function fetchSocialMediaForEvent(eventSlug: string) {
       console.error('  ❌ YouTube fetch failed:', error);
     }
   } else {
-    console.log('  ⏭️  YouTube: Not configured (NEXT_PUBLIC_YOUTUBE_API_KEY missing)');
+    console.log('  ⏭️  YouTube: Not configured (YOUTUBE_API_KEY missing)');
   }
 
   // 2. Fetch from Bluesky (always available)

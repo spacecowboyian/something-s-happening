@@ -90,7 +90,7 @@ Run `npm run db:seed` to populate the database.
 **`.env.example`** template with all API keys:
 ```bash
 DATABASE_URL="file:./dev.db"
-NEXT_PUBLIC_YOUTUBE_API_KEY=""          # Get from Google Cloud Console
+YOUTUBE_API_KEY=""          # Get from Google Cloud Console
 REDDIT_USER_AGENT=""        # Optional
 UNSPLASH_ACCESS_KEY=""      # Optional
 TWITTER_BEARER_TOKEN=""     # Optional (paid)
@@ -112,7 +112,7 @@ TWITTER_BEARER_TOKEN=""     # Optional (paid)
    - Copy the key (starts with `AIza...`)
 5. **Add to .env**:
    ```bash
-   NEXT_PUBLIC_YOUTUBE_API_KEY="AIzaSy...your-key-here"
+   YOUTUBE_API_KEY="AIzaSy...your-key-here"
    ```
 
 ### Security Tips
@@ -234,7 +234,7 @@ Shows helpful setup instructions.
 
 ### With API Key
 ```bash
-echo 'NEXT_PUBLIC_YOUTUBE_API_KEY="your-key"' >> .env
+echo 'YOUTUBE_API_KEY="your-key"' >> .env
 npm run test:youtube
 ```
 Tests 3 real API scenarios:

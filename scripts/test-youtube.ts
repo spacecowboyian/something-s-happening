@@ -14,13 +14,13 @@ async function main() {
 
   // Check if API key is configured
   if (!isYouTubeConfigured()) {
-    console.error('❌ NEXT_PUBLIC_YOUTUBE_API_KEY not found in environment variables');
+    console.error('❌ YOUTUBE_API_KEY not found in environment variables');
     console.log('\n📝 To set up YouTube API:');
     console.log('1. Go to https://console.cloud.google.com/');
     console.log('2. Create a project or select existing');
     console.log('3. Enable "YouTube Data API v3"');
     console.log('4. Create credentials > API Key');
-    console.log('5. Add to .env file: NEXT_PUBLIC_YOUTUBE_API_KEY="your-key-here"');
+    console.log('5. Add to .env file: YOUTUBE_API_KEY="your-key-here"');
     console.log('\n💡 See docs/YOUTUBE_API_GUIDE.md for detailed instructions');
     process.exit(1);
   }
