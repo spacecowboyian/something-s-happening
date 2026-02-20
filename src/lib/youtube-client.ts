@@ -7,7 +7,7 @@
 /**
  * Extract YouTube video ID from various URL formats
  */
-export function getYouTubeVideoId(url: string): string | null {
+export function getYouTubeVideoId(url?: string): string | null {
   if (!url) return null;
 
   try {
