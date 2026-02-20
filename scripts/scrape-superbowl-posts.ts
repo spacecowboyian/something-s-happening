@@ -26,12 +26,6 @@ import { upsertSourcePost } from '../src/lib/ingest'
 const adapter = new PrismaBetterSqlite3({ url: 'prisma/dev.db' })
 const prisma = new PrismaClient({ adapter })
 
-function isWithinEventWindow(date: Date, startsAt: Date, endsAt?: Date | null) {
-  if (date < startsAt) return false
-  if (endsAt && date > endsAt) return false
-  return true
-}
-
 function preferGeolocated<T>(posts: T[]) {
   const geolocated = posts.filter((post) => {
     const candidate = post as { lat?: number | null; lng?: number | null }
@@ -82,11 +76,6 @@ async function scrapeSuperbowlPosts() {
   console.log(`📍 Event: ${event.title}`)
   console.log(`📅 Date: ${event.startsAt.toISOString()}`)
   console.log(`🆔 Event ID: ${event.id}\n`)
-
-  const eventWindow = {
-    startsAt: event.startsAt,
-    endsAt: event.endsAt,
-  }
 
   const location =
     event.centerLat != null && event.centerLng != null

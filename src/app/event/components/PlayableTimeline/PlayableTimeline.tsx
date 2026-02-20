@@ -1,6 +1,6 @@
 'use client';
 
-import { CSSProperties, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button as AriaButton } from 'react-aria-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -49,74 +49,6 @@ type PlaybackMode = 'single' | 'continuous';
 
 const TEXT_PLAYBACK_INTERVAL_MS = 10000;
 const LIVE_INGEST_INTERVAL_MS = 10000;
-
-let youtubeApiReadyPromise: Promise<void> | null = null;
-
-declare global {
-  interface Window {
-    YT?: {
-      Player: new (
-        elementId: string,
-        options: {
-          videoId: string;
-          playerVars?: Record<string, number>;
-          events?: {
-            onReady?: () => void;
-            onStateChange?: (event: { data: number }) => void;
-          };
-        }
-      ) => {
-        playVideo: () => void;
-        pauseVideo: () => void;
-        seekTo: (seconds: number, allowSeekAhead: boolean) => void;
-        mute: () => void;
-        unMute: () => void;
-        isMuted: () => boolean;
-        getDuration: () => number;
-        getCurrentTime: () => number;
-        destroy: () => void;
-      };
-      PlayerState: {
-        PLAYING: number;
-        PAUSED: number;
-        ENDED: number;
-      };
-    };
-    onYouTubeIframeAPIReady?: () => void;
-  }
-}
-
-function ensureYouTubeApi() {
-  if (typeof window === 'undefined') {
-    return Promise.resolve();
-  }
-
-  if (window.YT?.Player) {
-    return Promise.resolve();
-  }
-
-  if (youtubeApiReadyPromise) {
-    return youtubeApiReadyPromise;
-  }
-
-  youtubeApiReadyPromise = new Promise<void>((resolve) => {
-    const existingScript = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
-
-    if (!existingScript) {
-      const script = document.createElement('script');
-      script.src = 'https://www.youtube.com/iframe_api';
-      document.body.appendChild(script);
-    }
-
-    const previousHandler = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = () => {
-      previousHandler?.();
-      resolve();
-    };
-  });
-
-  return youtubeApiReadyPromise;
-}
 
 function getEventStatus(startDate: Date, endDate?: Date): 'live' | 'upcoming' | 'completed' {
   const now = Date.now();
@@ -194,173 +126,12 @@ interface PlayerMediaProps {
   onComplete: () => void;
 }
 
-function YouTubePlayback({
-  videoId,
-  isPlaying,
-  isMuted,
-  onPlayStateChange,
-  onMuteStateChange,
-  onReadyStateChange,
-  onProgressChange,
-  seekTo,
-  onSeekHandled,
-  onComplete,
-}: {
-  videoId: string;
-  isPlaying: boolean;
-  isMuted: boolean;
-  onPlayStateChange?: (playing: boolean) => void;
-  onMuteStateChange?: (muted: boolean) => void;
-  onReadyStateChange?: (ready: boolean) => void;
-  onProgressChange: (position: number, duration: number) => void;
-  seekTo: number | null;
-  onSeekHandled: () => void;
-  onComplete: () => void;
-}) {
-  const reactId = useId();
-  const containerId = `youtube-player-${reactId.replace(/:/g, '')}`;
-  const playerRef = useRef<{
-    playVideo: () => void;
-    pauseVideo: () => void;
-    seekTo: (seconds: number, allowSeekAhead: boolean) => void;
-    mute: () => void;
-    unMute: () => void;
-    isMuted: () => boolean;
-    getDuration: () => number;
-    getCurrentTime: () => number;
-    destroy: () => void;
-  } | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    onReadyStateChange?.(false);
-
-    ensureYouTubeApi().then(() => {
-      if (!isMounted || !window.YT?.Player) {
-        return;
-      }
-
-      playerRef.current = new window.YT.Player(containerId, {
-        videoId,
-        playerVars: {
-          rel: 0,
-          modestbranding: 1,
-        },
-        events: {
-          onReady: () => {
-            onReadyStateChange?.(true);
-            if (isPlaying) {
-              playerRef.current?.playVideo();
-            }
-          },
-          onStateChange: (event) => {
-            if (event.data === window.YT?.PlayerState.PLAYING) {
-              onPlayStateChange?.(true);
-            }
-
-            if (event.data === window.YT?.PlayerState.PAUSED) {
-              onPlayStateChange?.(false);
-            }
-
-            if (typeof playerRef.current?.isMuted === 'function') {
-              onMuteStateChange?.(playerRef.current.isMuted());
-            }
-
-            if (event.data === window.YT?.PlayerState.ENDED) {
-              onComplete();
-            }
-          },
-        },
-      });
-    });
-
-    return () => {
-      isMounted = false;
-      onReadyStateChange?.(false);
-      try {
-        playerRef.current?.destroy();
-      } catch (error) {
-        // Log the error to aid debugging while still preventing it from breaking unmount flow.
-        console.error('Failed to destroy YouTube player instance', error);
-      }
-      playerRef.current = null;
-    };
-    // isPlaying is intentionally not a dependency - it's only used in onReady callback
-    // and we don't want to recreate the player when play state changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoId, onComplete, containerId, onPlayStateChange, onMuteStateChange, onReadyStateChange]);
-
-  useEffect(() => {
-    if (!playerRef.current) {
-      return;
-    }
-
-    if (typeof playerRef.current.playVideo !== 'function' || typeof playerRef.current.pauseVideo !== 'function') {
-      return;
-    }
-
-    if (isPlaying) {
-      playerRef.current.playVideo();
-      return;
-    }
-
-    playerRef.current.pauseVideo();
-  }, [isPlaying]);
-
-  useEffect(() => {
-    const player = playerRef.current;
-    if (!player || seekTo === null || typeof player.seekTo !== 'function') {
-      return;
-    }
-
-    player.seekTo(Math.max(seekTo, 0), true);
-    onSeekHandled();
-  }, [seekTo, onSeekHandled]);
-
-  useEffect(() => {
-    const player = playerRef.current;
-    if (!player || typeof player.mute !== 'function' || typeof player.unMute !== 'function') {
-      return;
-    }
-
-    if (isMuted) {
-      player.mute();
-      return;
-    }
-
-    player.unMute();
-  }, [isMuted]);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      const player = playerRef.current;
-      if (!player) {
-        return;
-      }
-
-      if (typeof player.getDuration !== 'function' || typeof player.getCurrentTime !== 'function') {
-        return;
-      }
-
-      const duration = player.getDuration();
-      const position = player.getCurrentTime();
-      if (duration > 0) {
-        onProgressChange(position, duration);
-      }
-    }, 250);
-
-    return () => window.clearInterval(timer);
-  }, [onProgressChange]);
-
-  return <div id={containerId} className={styles.youtubePlayer} />;
-}
-
 function PlayerMedia({
   item,
   isPlaying,
   isMuted,
   onPlayStateChange,
-  onMuteStateChange,
+  // onMuteStateChange is not used with simple iframe embeds
   onYouTubeReadyStateChange,
   onProgressChange,
   seekTo,
