@@ -499,6 +499,7 @@ export function PlayableTimeline({
   const [isMuted, setIsMuted] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(false);
   const [showMomentList, setShowMomentList] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'up' | 'down' | null>(null);
   const playbackModeRef = useRef<PlaybackMode>('continuous');
   const controlsHideTimerRef = useRef<number | null>(null);
   const touchStartRef = useRef<{ y: number; t: number } | null>(null);
@@ -634,6 +635,7 @@ export function PlayableTimeline({
       return;
     }
 
+    setSlideDirection('up');
     setCurrentPosition((position) => {
       const lastIndex = orderedItems.length - 1;
 
@@ -680,11 +682,13 @@ export function PlayableTimeline({
   }, [currentItem, isPlaying]);
 
   const onBack = useCallback(() => {
+    setSlideDirection('down');
     setCurrentPosition((position) => Math.max(position - 1, 0));
     setIsPlaying(true);
   }, []);
 
   const onNext = useCallback(() => {
+    setSlideDirection('up');
     setCurrentPosition((position) => Math.min(position + 1, Math.max(orderedItems.length - 1, 0)));
     setIsPlaying(true);
   }, [orderedItems.length]);
@@ -781,6 +785,12 @@ export function PlayableTimeline({
     '--sticky-offset': `${stickyOffset}px`,
   } as CSSProperties;
 
+  const slideFrameClass = [
+    styles.slideFrame,
+    slideDirection === 'up' ? styles.slideFromBottom : '',
+    slideDirection === 'down' ? styles.slideFromTop : '',
+  ].filter(Boolean).join(' ');
+
   return (
     <div className={styles.container} style={containerStyle}>
       <div
@@ -794,7 +804,11 @@ export function PlayableTimeline({
             onTouchEnd={handleTouchEnd}
           >
             {currentItem ? (
-              <>
+              <div
+                key={currentIndex}
+                className={slideFrameClass}
+                onAnimationEnd={() => setSlideDirection(null)}
+              >
                 <PlayerMedia
                   item={currentItem}
                   isPlaying={isPlaying}
@@ -845,7 +859,7 @@ export function PlayableTimeline({
                     </span>
                   </div>
                 </div>
-              </>
+              </div>
             ) : (
               <p className={styles.playerContent}>No media available yet.</p>
             )}
