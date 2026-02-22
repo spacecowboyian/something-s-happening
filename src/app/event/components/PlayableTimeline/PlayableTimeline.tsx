@@ -4,6 +4,7 @@ import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from
 import { Button as AriaButton } from 'react-aria-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faArrowRotateLeft,
   faBackwardStep,
   faBars,
   faChevronDown,
@@ -408,7 +409,7 @@ function PlayerMedia({
     return (
       <iframe
         className={styles.youtubePlayer}
-        src={`https://www.youtube.com/embed/${youTubeId}`}
+        src={`https://www.youtube.com/embed/${youTubeId}?autoplay=1&mute=${isMuted ? 1 : 0}&playsinline=1`}
         title="YouTube video"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
@@ -444,12 +445,14 @@ function PlayerMedia({
   return (
     <div
       className={styles.textCaptionContainer}
-      style={
-        currentBgImage
-          ? { backgroundImage: `url(${currentBgImage})` }
-          : { background: fallbackGradient }
-      }
+      style={{ background: fallbackGradient }}
     >
+      {currentBgImage && (
+        <div
+          className={styles.textCaptionBgImage}
+          style={{ backgroundImage: `url(${currentBgImage})` }}
+        />
+      )}
       <div className={styles.textCaptionOverlay} />
       <p className={styles.textCaptionText}>
         {textChunks[currentChunkIndex] ?? item.content}
@@ -500,6 +503,8 @@ export function PlayableTimeline({
   const [controlsVisible, setControlsVisible] = useState(false);
   const [showMomentList, setShowMomentList] = useState(false);
   const [slideDirection, setSlideDirection] = useState<'up' | 'down' | null>(null);
+  const [showRepeatIcon, setShowRepeatIcon] = useState(false);
+  const momentRepeatCountRef = useRef(0);
   const playbackModeRef = useRef<PlaybackMode>('continuous');
   const controlsHideTimerRef = useRef<number | null>(null);
   const touchStartRef = useRef<{ y: number; t: number } | null>(null);
@@ -635,6 +640,18 @@ export function PlayableTimeline({
       return;
     }
 
+    // Repeat the current moment 3 times before advancing
+    const REPEATS = 3;
+    if (momentRepeatCountRef.current < REPEATS - 1) {
+      momentRepeatCountRef.current += 1;
+      // Show the repeat icon and fade it out over 3 seconds
+      setShowRepeatIcon(true);
+      window.setTimeout(() => setShowRepeatIcon(false), 3000);
+      return;
+    }
+
+    // Done repeating — advance to next moment
+    momentRepeatCountRef.current = 0;
     setSlideDirection('up');
     setCurrentPosition((position) => {
       const lastIndex = orderedItems.length - 1;
@@ -667,6 +684,7 @@ export function PlayableTimeline({
 
   const handleSelectMoment = useCallback((index: number) => {
     setCurrentPosition(index);
+    momentRepeatCountRef.current = 0;
     updatePlaybackMode('single');
     setIsPlaying(true);
     setShowMomentList(false);
@@ -683,12 +701,14 @@ export function PlayableTimeline({
 
   const onBack = useCallback(() => {
     setSlideDirection('down');
+    momentRepeatCountRef.current = 0;
     setCurrentPosition((position) => Math.max(position - 1, 0));
     setIsPlaying(true);
   }, []);
 
   const onNext = useCallback(() => {
     setSlideDirection('up');
+    momentRepeatCountRef.current = 0;
     setCurrentPosition((position) => Math.min(position + 1, Math.max(orderedItems.length - 1, 0)));
     setIsPlaying(true);
   }, [orderedItems.length]);
@@ -826,6 +846,12 @@ export function PlayableTimeline({
                   <div className={styles.playerLoading} aria-live="polite">
                     <span className={styles.loadingSpinner} aria-hidden="true" />
                     <span>Loading player…</span>
+                  </div>
+                )}
+                {/* Repeat icon — appears in upper-right when a moment loops, fades out */}
+                {showRepeatIcon && (
+                  <div className={styles.repeatIcon} aria-hidden="true">
+                    <FontAwesomeIcon icon={faArrowRotateLeft} />
                   </div>
                 )}
                 {/* Mobile-only tap layer: sits above media, captures taps to reveal controls */}

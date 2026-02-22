@@ -467,18 +467,30 @@
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
+  /* vertically align text to ~75% down the screen */
+  align-items: flex-end;
   justify-content: center;
-  background-color: var(--color-cinematic-black);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.textCaptionBgImage {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: grayscale(1);
+  mix-blend-mode: luminosity;
+  opacity: 0.55;
 }
 
 .textCaptionOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.42);
+  background: rgba(0, 0, 0, 0.28);
 }
 
 .textCaptionText {
@@ -492,10 +504,29 @@
     0 2px 16px rgba(0, 0, 0, 0.7),
     0 1px 4px rgba(0, 0, 0, 0.5);
   padding: 0 var(--spacing-xl);
-  margin: 0;
+  margin: 0 0 25% 0;
   line-height: 1.1;
   max-width: 90%;
-  padding-bottom: 80px;
+}
+
+/* ── Repeat icon (upper-right, fades out after 3 s) ─────────────────── */
+
+@keyframes repeatIconFade {
+  0%   { opacity: 1; transform: scale(1); }
+  70%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.8); }
+}
+
+.repeatIcon {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 15;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+  animation: repeatIconFade 3s ease-in-out forwards;
 }
 
 /* ── Summary (unused, kept for completeness) ─────────────────────────── */
@@ -667,8 +698,13 @@
 
   .textCaptionText {
     font-size: clamp(2rem, 8vw, 3.5rem);
-    /* extra bottom padding clears the absolute-positioned controls overlay */
-    padding-bottom: 120px;
+    /* extra bottom margin clears the absolute-positioned controls overlay (~120px) */
+    margin-bottom: max(120px, 25%);
+  }
+
+  .repeatIcon {
+    top: calc(var(--spacing-lg) + env(safe-area-inset-top, 0px));
+    font-size: 1.6rem;
   }
 }
 
