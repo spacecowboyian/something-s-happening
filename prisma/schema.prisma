@@ -74,6 +74,7 @@ enum Platform {
   X
   BLUESKY
   YOUTUBE
+  REDDIT
   OTHER
 }
 
