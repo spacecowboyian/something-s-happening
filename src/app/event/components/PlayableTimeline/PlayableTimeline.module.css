@@ -46,6 +46,20 @@
   flex-wrap: wrap;
 }
 
+/* Hamburger: hidden on desktop, shown on mobile */
+.momentListToggle {
+  display: none;
+}
+
+/* Close button row for the mobile moment list drawer */
+.momentListCloseRow {
+  display: none;
+}
+
+.momentListCloseBtn {
+  display: none;
+}
+
 .iconButton {
   appearance: none;
   background: transparent;
@@ -85,16 +99,53 @@
 }
 
 .playerWindow {
-  min-height: clamp(180px, calc(100vh - 520px), 420px);
-  max-height: 46vh;
+  min-height: clamp(180px, calc(100vh - 420px), 480px);
+  max-height: 52vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-cinematic-stage);
+  border-top: 1px solid var(--color-cinematic-border);
+  border-bottom: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Slide frame: wraps a single moment's content inside playerWindow ── */
+
+.slideFrame {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
   justify-content: center;
   padding: var(--spacing-xl);
-  background-color: var(--color-cinematic-stage);
-  border-top: 1px solid var(--color-cinematic-border);
-  border-bottom: 0;
+}
+
+@keyframes slideInFromBottom {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes slideInFromTop {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
+}
+
+.slideFromBottom {
+  animation: slideInFromBottom 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.slideFromTop {
+  animation: slideInFromTop 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ── Controls container (wraps progress + controls row) ──────────────── */
+
+.controlsContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-cinematic-black);
 }
 
 .progressWrap {
@@ -292,6 +343,194 @@
   color: var(--color-accent-800);
 }
 
+/* ── Mobile tap layer ────────────────────────────────────────────────── */
+
+.mobileTapLayer {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobileTapLayer {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    cursor: pointer;
+    background: transparent;
+  }
+}
+
+/* ── Shorts-style bottom overlay ─────────────────────────────────────── */
+
+.playerInfoOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--spacing-2xl) var(--spacing-xl) var(--spacing-md);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.88) 55%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.overlayEventInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.overlayTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  line-height: var(--line-height-lg);
+}
+
+.overlayStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  color: #ffffff;
+}
+
+.overlayStatusBadge.live {
+  background-color: rgba(239, 68, 68, 0.85);
+}
+
+.overlayStatusBadge.upcoming {
+  background-color: rgba(59, 130, 246, 0.85);
+}
+
+.overlayStatusBadge.completed {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.overlaySourceRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  pointer-events: all;
+  flex-wrap: wrap;
+}
+
+.overlayServiceIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-full);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-mono);
+}
+
+.overlaySource {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.overlaySource:hover {
+  text-decoration: underline;
+}
+
+.overlayMeta {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-family-mono);
+}
+
+/* ── Text caption (shorts-style) ─────────────────────────────────────── */
+
+.textCaptionContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  /* vertically align text to ~75% down the screen */
+  align-items: flex-end;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.textCaptionBgImage {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: grayscale(1);
+  mix-blend-mode: luminosity;
+  opacity: 0.55;
+}
+
+.textCaptionOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.textCaptionText {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  text-align: center;
+  text-shadow:
+    0 2px 16px rgba(0, 0, 0, 0.7),
+    0 1px 4px rgba(0, 0, 0, 0.5);
+  padding: 0 var(--spacing-xl);
+  margin: 0 0 25% 0;
+  line-height: 1.1;
+  max-width: 90%;
+}
+
+/* ── Repeat icon (upper-right, fades out after 3 s) ─────────────────── */
+
+@keyframes repeatIconFade {
+  0%   { opacity: 1; transform: scale(1); }
+  70%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.8); }
+}
+
+.repeatIcon {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 15;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+  animation: repeatIconFade 3s ease-in-out forwards;
+}
+
+/* ── Summary (unused, kept for completeness) ─────────────────────────── */
+
 .summarySection {
   display: none;
 }
@@ -310,13 +549,75 @@
 }
 
 @media (max-width: 768px) {
+  /* ── Full-screen portrait layout ──────────────────────────────────── */
+  .stickyTopArea {
+    position: fixed;
+    inset: 0;
+    height: 100dvh;
+    border-bottom: none;
+    display: flex;
+    flex-direction: column;
+  }
+
   .playerSection {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Player window fills remaining height after controls */
+  .playerWindow {
+    flex: 1;
+    min-height: 0;
+    max-height: none;
     padding: 0;
   }
 
-  .controlsRow,
-  .progressWrap {
+  .slideFrame {
     padding: 0;
+  }
+
+  /* Controls container: sticks to bottom, overlays player */
+  .controlsContainer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.72);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transition: opacity 0.25s;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .stickyTopArea.controlsVisible .controlsContainer {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* YouTube iframe: fill the player window completely */
+  .youtubePlayer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: unset;
+    border-radius: 0;
+  }
+
+  /* Native video: fill the player window completely */
+  .nativeMedia {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    object-fit: cover;
   }
 
   .controlsRow {
@@ -333,6 +634,52 @@
     margin-left: 0;
   }
 
+  /* Timeline: hidden on mobile, shown as full-screen drawer */
+  .timelineSection {
+    margin-top: 0;
+    display: none;
+  }
+
+  .timelineSection.momentListOpen {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    overflow-y: auto;
+    background-color: var(--color-background);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Close button row inside the moment list drawer */
+  .momentListCloseRow {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-md) 0;
+    position: sticky;
+    top: 0;
+    background-color: var(--color-background);
+    z-index: 10;
+  }
+
+  .momentListCloseBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    appearance: none;
+    background: var(--color-cinematic-black);
+    border: 1px solid var(--color-cinematic-border);
+    border-radius: var(--radius-full);
+    color: var(--color-cinematic-cyan);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+  }
+
+  /* Show hamburger on mobile */
+  .momentListToggle {
+    display: inline-flex;
+  }
+
   .playerContent {
     font-size: clamp(1.3rem, 7vw, 1.9rem);
     line-height: 1.2;
@@ -340,29 +687,39 @@
     max-width: 100%;
   }
 
-  .playerSourceRow,
-  .playerMeta,
   .playerLoading {
     width: 100%;
     max-width: 100%;
   }
 
-  .playerWindow {
-    min-height: clamp(150px, calc(100vh - 470px), 260px);
-    max-height: 36vh;
-    padding: var(--spacing-md);
+  .overlayTitle {
+    font-size: var(--font-size-md);
+  }
+
+  .textCaptionText {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    /* extra bottom margin clears the absolute-positioned controls overlay (~120px) */
+    margin-bottom: max(120px, 25%);
+  }
+
+  .repeatIcon {
+    top: calc(var(--spacing-lg) + env(safe-area-inset-top, 0px));
+    font-size: 1.6rem;
   }
 }
 
-@media (max-height: 860px) {
+/* Only apply height constraints on larger screens (min-width: 769px = one pixel above the 768px mobile breakpoint) */
+@media (max-height: 860px) and (min-width: 769px) {
   .playerWindow {
     min-height: clamp(150px, calc(100vh - 460px), 300px);
     max-height: 38vh;
+  }
+
+  .slideFrame {
     padding: var(--spacing-md) var(--spacing-xl);
   }
 
-  .progressWrap,
-  .controlsRow {
+  .controlsContainer {
     gap: var(--spacing-sm);
   }
 }

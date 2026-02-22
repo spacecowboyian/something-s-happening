@@ -4,7 +4,9 @@ import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from
 import { Button as AriaButton } from 'react-aria-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+  faArrowRotateLeft,
   faBackwardStep,
+  faBars,
   faChevronDown,
   faChevronUp,
   faForwardStep,
@@ -13,11 +15,12 @@ import {
   faRepeat,
   faVolumeHigh,
   faVolumeXmark,
+  faXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { EventHeader } from '../EventHeader';
 import { Timeline } from '../Timeline';
 import { MomentCard } from '@/components/MomentCard';
 import { getYouTubeVideoId } from '@/lib/youtube';
+import { getYouTubeThumbnail } from '@/lib/youtube-client';
 import styles from './PlayableTimeline.module.css';
 
 export interface TimelineItem {
@@ -113,6 +116,31 @@ function getServiceLabel(url?: string) {
   return 'WEB';
 }
 
+function getStatusLabel(status: 'live' | 'upcoming' | 'completed') {
+  switch (status) {
+    case 'live': return 'Live Now';
+    case 'upcoming': return 'Upcoming';
+    case 'completed': return 'Completed';
+  }
+}
+
+const ITEM_GRADIENTS = [
+  'linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%)',
+  'linear-gradient(135deg, #A78BFA 0%, #60A5FA 100%)',
+  'linear-gradient(135deg, #FCD34D 0%, #F87171 100%)',
+  'linear-gradient(135deg, #34D399 0%, #3B82F6 100%)',
+  'linear-gradient(135deg, #F472B6 0%, #9333EA 100%)',
+  'linear-gradient(135deg, #FB923C 0%, #FBBF24 100%)',
+];
+
+function getItemGradient(itemId: string): string {
+  let hash = 0;
+  for (let i = 0; i < itemId.length; i++) {
+    hash = (hash * 31 + itemId.charCodeAt(i)) | 0;
+  }
+  return ITEM_GRADIENTS[Math.abs(hash) % ITEM_GRADIENTS.length];
+}
+
 interface PlayerMediaProps {
   item?: TimelineItem;
   isPlaying: boolean;
@@ -124,6 +152,7 @@ interface PlayerMediaProps {
   seekTo: number | null;
   onSeekHandled: () => void;
   onComplete: () => void;
+  backgroundImages?: string[];
 }
 
 function PlayerMedia({
@@ -137,12 +166,53 @@ function PlayerMedia({
   seekTo,
   onSeekHandled,
   onComplete,
+  backgroundImages = [],
 }: PlayerMediaProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const textPlaybackStartRef = useRef<number | null>(null);
   const youTubeId = item?.mediaType === 'video' ? getYouTubeVideoId(item.mediaUrl) : null;
   const isYouTube = Boolean(youTubeId);
+
+  // Text caption chunk logic
+  const textChunks = useMemo(() => {
+    if (!item || item.mediaType !== 'text') return [];
+    const words = item.content.split(/\s+/).filter(Boolean);
+    const chunks: string[] = [];
+    for (let i = 0; i < words.length; i += 2) {
+      chunks.push(words.slice(i, Math.min(i + 2, words.length)).join(' '));
+    }
+    return chunks.length > 0 ? chunks : [item.content];
+  }, [item]);
+
+  // Track chunk progress: { itemId, step } — auto-resets to 0 when itemId changes
+  const [chunkStep, setChunkStep] = useState<{ itemId: string | null; step: number }>({
+    itemId: null,
+    step: 0,
+  });
+  const currentChunkIndex =
+    chunkStep.itemId === (item?.id ?? null)
+      ? chunkStep.step % Math.max(textChunks.length, 1)
+      : 0;
+
+  useEffect(() => {
+    if (!item || item.mediaType !== 'text' || !isPlaying || textChunks.length <= 1) return;
+    const chunkDuration = Math.floor(TEXT_PLAYBACK_INTERVAL_MS / textChunks.length);
+    const timer = window.setInterval(() => {
+      setChunkStep((prev) => ({
+        itemId: item.id,
+        step: prev.itemId === item.id ? prev.step + 1 : 1,
+      }));
+    }, chunkDuration);
+    return () => window.clearInterval(timer);
+  }, [item, isPlaying, textChunks.length]);
+
+  const currentBgImage =
+    backgroundImages.length > 0
+      ? backgroundImages[currentChunkIndex % backgroundImages.length]
+      : null;
+
+  const fallbackGradient = item ? getItemGradient(item.id) : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
 
   useEffect(() => {
     if (!isYouTube) {
@@ -339,30 +409,24 @@ function PlayerMedia({
 
   if (item.mediaType === 'video' && youTubeId) {
     return (
-      <>
-        <iframe
-          className={styles.youtubePlayer}
-          src={`https://www.youtube.com/embed/${youTubeId}`}
-          title="YouTube video"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-        <p className={styles.playerContent}>{item.content}</p>
-      </>
+      <iframe
+        className={styles.youtubePlayer}
+        src={`https://www.youtube.com/embed/${youTubeId}?autoplay=1&mute=${isMuted ? 1 : 0}&playsinline=1`}
+        title="YouTube video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
     );
   }
 
   if (item.mediaType === 'video' && item.mediaUrl) {
     return (
-      <>
-        <video
-          ref={videoRef}
-          src={item.mediaUrl}
-          className={styles.nativeMedia}
-          onEnded={onComplete}
-        />
-        <p className={styles.playerContent}>{item.content}</p>
-      </>
+      <video
+        ref={videoRef}
+        src={item.mediaUrl}
+        className={styles.nativeMedia}
+        onEnded={onComplete}
+      />
     );
   }
 
@@ -380,7 +444,23 @@ function PlayerMedia({
     );
   }
 
-  return <p className={styles.playerContent}>{item.content}</p>;
+  return (
+    <div
+      className={styles.textCaptionContainer}
+      style={{ background: fallbackGradient }}
+    >
+      {currentBgImage && (
+        <div
+          className={styles.textCaptionBgImage}
+          style={{ backgroundImage: `url(${currentBgImage})` }}
+        />
+      )}
+      <div className={styles.textCaptionOverlay} />
+      <p className={styles.textCaptionText}>
+        {textChunks[currentChunkIndex] ?? item.content}
+      </p>
+    </div>
+  );
 }
 
 export function PlayableTimeline({
@@ -388,7 +468,6 @@ export function PlayableTimeline({
   startDate,
   endDate,
   initialStatus,
-  description,
   initialItems,
   pendingLiveItems = [],
 }: PlayableTimelineProps) {
@@ -423,7 +502,35 @@ export function PlayableTimeline({
   const [repeatPlayback, setRepeatPlayback] = useState(true);
   const [youtubePlayerReady, setYoutubePlayerReady] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(false);
+  const [showMomentList, setShowMomentList] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'up' | 'down' | null>(null);
+  const [showRepeatIcon, setShowRepeatIcon] = useState(false);
+  const momentRepeatCountRef = useRef(0);
   const playbackModeRef = useRef<PlaybackMode>('continuous');
+  const controlsHideTimerRef = useRef<number | null>(null);
+  const touchStartRef = useRef<{ y: number; t: number } | null>(null);
+
+  const handlePlayerTap = useCallback(() => {
+    // Toggle play/pause on tap (Shorts/Reels behaviour)
+    setIsPlaying((prev) => !prev);
+    // Also reveal controls briefly
+    setControlsVisible(true);
+    if (controlsHideTimerRef.current !== null) {
+      window.clearTimeout(controlsHideTimerRef.current);
+    }
+    controlsHideTimerRef.current = window.setTimeout(() => {
+      setControlsVisible(false);
+    }, 3000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (controlsHideTimerRef.current !== null) {
+        window.clearTimeout(controlsHideTimerRef.current);
+      }
+    };
+  }, []);
 
   const updatePlaybackMode = useCallback((mode: PlaybackMode) => {
     playbackModeRef.current = mode;
@@ -439,6 +546,21 @@ export function PlayableTimeline({
       return order === 'chronological' ? delta : -delta;
     });
   }, [items, order]);
+
+  const backgroundImages = useMemo(() => {
+    const images: string[] = [];
+    for (const item of items) {
+      if (item.mediaType === 'image' && item.mediaUrl) {
+        images.push(item.mediaUrl);
+      } else if (item.mediaType === 'video' && item.mediaUrl) {
+        const ytId = getYouTubeVideoId(item.mediaUrl);
+        if (ytId) {
+          images.push(getYouTubeThumbnail(ytId));
+        }
+      }
+    }
+    return images;
+  }, [items]);
 
   useEffect(() => {
     const statusPoll = window.setInterval(() => {
@@ -488,8 +610,6 @@ export function PlayableTimeline({
 
   const chronologicalFirstId = chronologicalItems[0]?.id;
   const chronologicalLastId = chronologicalItems[chronologicalItems.length - 1]?.id;
-  const headerStartDate = (chronologicalItems[0]?.timestamp as Date | undefined) ?? normalizedStartDate;
-  const headerEndDate = (chronologicalItems[chronologicalItems.length - 1]?.timestamp as Date | undefined) ?? normalizedEndDate;
 
   const setItemRef = useCallback((itemId: string, node: HTMLElement | null) => {
     itemRefs.current[itemId] = node;
@@ -525,6 +645,24 @@ export function PlayableTimeline({
       return;
     }
 
+    // Repeat the current moment 3 times before advancing
+    const REPEATS = 3;
+    if (momentRepeatCountRef.current < REPEATS - 1) {
+      momentRepeatCountRef.current += 1;
+      // Show the repeat icon and fade it out over 3 seconds
+      setShowRepeatIcon(true);
+      window.setTimeout(() => setShowRepeatIcon(false), 3000);
+      // Restart PlayerMedia's playback timer: briefly pause then resume.
+      // This causes the PlayerMedia timer effect to re-run so onComplete
+      // fires again after the next full play-through.
+      setIsPlaying(false);
+      window.setTimeout(() => setIsPlaying(true), 0);
+      return;
+    }
+
+    // Done repeating — advance to next moment
+    momentRepeatCountRef.current = 0;
+    setSlideDirection('up');
     setCurrentPosition((position) => {
       const lastIndex = orderedItems.length - 1;
 
@@ -556,8 +694,10 @@ export function PlayableTimeline({
 
   const handleSelectMoment = useCallback((index: number) => {
     setCurrentPosition(index);
+    momentRepeatCountRef.current = 0;
     updatePlaybackMode('single');
     setIsPlaying(true);
+    setShowMomentList(false);
   }, [updatePlaybackMode]);
 
   useEffect(() => {
@@ -570,14 +710,38 @@ export function PlayableTimeline({
   }, [currentItem, isPlaying]);
 
   const onBack = useCallback(() => {
+    setSlideDirection('down');
+    momentRepeatCountRef.current = 0;
     setCurrentPosition((position) => Math.max(position - 1, 0));
     setIsPlaying(true);
   }, []);
 
   const onNext = useCallback(() => {
+    setSlideDirection('up');
+    momentRepeatCountRef.current = 0;
     setCurrentPosition((position) => Math.min(position + 1, Math.max(orderedItems.length - 1, 0)));
     setIsPlaying(true);
   }, [orderedItems.length]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartRef.current = { y: e.touches[0].clientY, t: Date.now() };
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current) return;
+    const deltaY = e.changedTouches[0].clientY - touchStartRef.current.y;
+    const deltaT = Date.now() - touchStartRef.current.t;
+    touchStartRef.current = null;
+
+    if (Math.abs(deltaY) < 60 || deltaT > 600) return;
+
+    e.preventDefault();
+    if (deltaY < 0) {
+      onNext();
+    } else {
+      onBack();
+    }
+  }, [onNext, onBack]);
 
   const onTogglePlay = useCallback(() => {
     if (!hasItems) {
@@ -651,34 +815,35 @@ export function PlayableTimeline({
     '--sticky-offset': `${stickyOffset}px`,
   } as CSSProperties;
 
+  const slideFrameClass = [
+    styles.slideFrame,
+    slideDirection === 'up' ? styles.slideFromBottom : '',
+    slideDirection === 'down' ? styles.slideFromTop : '',
+  ].filter(Boolean).join(' ');
+
+  const slideFrameStyle = currentItem
+    ? { background: getItemGradient(currentItem.id) }
+    : undefined;
+
   return (
     <div className={styles.container} style={containerStyle}>
-      <div className={styles.stickyTopArea} ref={stickyAreaRef}>
-        <EventHeader
-          title={title}
-          startDate={headerStartDate}
-          endDate={headerEndDate}
-          status={status}
-          description={description}
-        />
-
+      <div
+        className={`${styles.stickyTopArea} ${controlsVisible ? styles.controlsVisible : ''}`}
+        ref={stickyAreaRef}
+      >
         <section className={styles.playerSection} aria-label="Media player">
-          <div className={styles.playerWindow}>
+          <div
+            className={styles.playerWindow}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             {currentItem ? (
-              <>
-                <p className={styles.playerSourceRow}>
-                  <span className={styles.serviceIcon} aria-hidden="true">
-                    {getServiceLabel(currentItem.sourceUrl)}
-                  </span>
-                  <a
-                    href={getProfileUrl(currentItem)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.playerSource}
-                  >
-                    {currentItem.source}
-                  </a>
-                </p>
+              <div
+                key={currentIndex}
+                className={slideFrameClass}
+                style={slideFrameStyle}
+                onAnimationEnd={() => setSlideDirection(null)}
+              >
                 <PlayerMedia
                   item={currentItem}
                   isPlaying={isPlaying}
@@ -690,6 +855,7 @@ export function PlayableTimeline({
                   seekTo={pendingSeek}
                   onSeekHandled={() => setPendingSeek(null)}
                   onComplete={advancePlayback}
+                  backgroundImages={backgroundImages}
                 />
                 {currentIsYouTube && !youtubePlayerReady && (
                   <div className={styles.playerLoading} aria-live="polite">
@@ -697,103 +863,156 @@ export function PlayableTimeline({
                     <span>Loading player…</span>
                   </div>
                 )}
-                <p className={styles.playerMeta}>
-                  {formatDateTimeLocal(currentItem.timestamp)}
-                </p>
-              </>
+                {/* Repeat icon — appears in upper-right when a moment loops, fades out */}
+                {showRepeatIcon && (
+                  <div className={styles.repeatIcon} aria-hidden="true">
+                    <FontAwesomeIcon icon={faArrowRotateLeft} />
+                  </div>
+                )}
+                {/* Mobile-only tap layer: sits above media, captures taps to reveal controls */}
+                <div
+                  className={styles.mobileTapLayer}
+                  onClick={handlePlayerTap}
+                  aria-hidden="true"
+                />
+                <div className={styles.playerInfoOverlay}>
+                  <div className={styles.overlayEventInfo}>
+                    <span className={`${styles.overlayStatusBadge} ${styles[status]}`}>
+                      {getStatusLabel(status)}
+                    </span>
+                    <h1 className={styles.overlayTitle}>{title}</h1>
+                  </div>
+                  <div className={styles.overlaySourceRow}>
+                    <span className={styles.overlayServiceIcon} aria-hidden="true">
+                      {getServiceLabel(currentItem.sourceUrl)}
+                    </span>
+                    <a
+                      href={getProfileUrl(currentItem)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.overlaySource}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {currentItem.source}
+                    </a>
+                    <span className={styles.overlayMeta}>
+                      {formatDateTimeLocal(currentItem.timestamp)}
+                    </span>
+                  </div>
+                </div>
+              </div>
             ) : (
               <p className={styles.playerContent}>No media available yet.</p>
             )}
           </div>
 
-          <div className={styles.progressWrap}>
-            <input
-              type="range"
-              min={0}
-              max={Math.max(playbackDuration, 0.1)}
-              step={0.1}
-              value={Math.min(playbackProgress, Math.max(playbackDuration, 0.1))}
-              onChange={(event) => onProgressInput(event.target.value)}
-              className={styles.progressBar}
-              aria-label="Playback progress"
-              disabled={!hasItems || playbackDuration <= 0}
-            />
-          </div>
-
-          <div className={styles.controlsRow}>
-            <div className={styles.transportControls}>
-              <AriaButton
-                onPress={onBack}
-                isDisabled={!hasItems || currentIndex <= 0}
-                className={styles.iconButton}
-                aria-label="Previous moment"
-              >
-                <FontAwesomeIcon icon={faBackwardStep} />
-              </AriaButton>
-              <AriaButton
-                onPress={onTogglePlay}
-                isDisabled={!hasItems}
-                className={styles.iconButton}
-                aria-label={isPlaying ? 'Pause' : 'Play'}
-              >
-                <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
-              </AriaButton>
-              <AriaButton
-                onPress={onNext}
-                isDisabled={!hasItems || isAtEnd}
-                className={styles.iconButton}
-                aria-label="Next moment"
-              >
-                <FontAwesomeIcon icon={faForwardStep} />
-              </AriaButton>
-              <AriaButton
-                onPress={() => setRepeatPlayback((value) => !value)}
-                className={`${styles.iconButton} ${repeatPlayback ? styles.iconButtonActive : ''}`}
-                aria-label={repeatPlayback ? 'Disable repeat' : 'Enable repeat'}
-              >
-                <FontAwesomeIcon icon={faRepeat} />
-              </AriaButton>
-              <AriaButton
-                onPress={() => setIsMuted((value) => !value)}
-                className={`${styles.iconButton} ${!isMuted ? styles.iconButtonActive : ''}`}
-                aria-label={isMuted ? 'Unmute' : 'Mute'}
-              >
-                <FontAwesomeIcon icon={isMuted ? faVolumeXmark : faVolumeHigh} />
-              </AriaButton>
-              <span className={styles.controlTime}>
-                {formatTime(playbackProgress)} / {formatTime(playbackDuration)}
-              </span>
+          <div className={styles.controlsContainer}>
+            <div className={styles.progressWrap}>
+              <input
+                type="range"
+                min={0}
+                max={Math.max(playbackDuration, 0.1)}
+                step={0.1}
+                value={Math.min(playbackProgress, Math.max(playbackDuration, 0.1))}
+                onChange={(event) => onProgressInput(event.target.value)}
+                className={styles.progressBar}
+                aria-label="Playback progress"
+                disabled={!hasItems || playbackDuration <= 0}
+              />
             </div>
 
-            <div className={styles.controls}>
-              <AriaButton
-                onPress={() => {
-                  setOrder((value) =>
-                    value === 'chronological' ? 'reverse-chronological' : 'chronological'
-                  );
-                  setCurrentPosition(0);
-                }}
-                className={styles.iconButton}
-                aria-label={
-                  order === 'chronological'
-                    ? 'Switch to reverse chronological order'
-                    : 'Switch to chronological order'
-                }
-              >
-                <span>
-                  <FontAwesomeIcon icon={order === 'chronological' ? faChevronUp : faChevronDown} />
+            <div className={styles.controlsRow}>
+              <div className={styles.transportControls}>
+                <AriaButton
+                  onPress={onBack}
+                  isDisabled={!hasItems || currentIndex <= 0}
+                  className={styles.iconButton}
+                  aria-label="Previous moment"
+                >
+                  <FontAwesomeIcon icon={faBackwardStep} />
+                </AriaButton>
+                <AriaButton
+                  onPress={onTogglePlay}
+                  isDisabled={!hasItems}
+                  className={styles.iconButton}
+                  aria-label={isPlaying ? 'Pause' : 'Play'}
+                >
+                  <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+                </AriaButton>
+                <AriaButton
+                  onPress={onNext}
+                  isDisabled={!hasItems || isAtEnd}
+                  className={styles.iconButton}
+                  aria-label="Next moment"
+                >
+                  <FontAwesomeIcon icon={faForwardStep} />
+                </AriaButton>
+                <AriaButton
+                  onPress={() => setRepeatPlayback((value) => !value)}
+                  className={`${styles.iconButton} ${repeatPlayback ? styles.iconButtonActive : ''}`}
+                  aria-label={repeatPlayback ? 'Disable repeat' : 'Enable repeat'}
+                >
+                  <FontAwesomeIcon icon={faRepeat} />
+                </AriaButton>
+                <AriaButton
+                  onPress={() => setIsMuted((value) => !value)}
+                  className={`${styles.iconButton} ${!isMuted ? styles.iconButtonActive : ''}`}
+                  aria-label={isMuted ? 'Unmute' : 'Mute'}
+                >
+                  <FontAwesomeIcon icon={isMuted ? faVolumeXmark : faVolumeHigh} />
+                </AriaButton>
+                <span className={styles.controlTime}>
+                  {formatTime(playbackProgress)} / {formatTime(playbackDuration)}
                 </span>
-              </AriaButton>
-            </div>
-          </div>
+              </div>
 
-          {waitingForLiveContent && (
-            <p className={styles.liveHint}>Waiting for new live media to continue playback…</p>
-          )}
+              <div className={styles.controls}>
+                <AriaButton
+                  onPress={() => {
+                    setOrder((value) =>
+                      value === 'chronological' ? 'reverse-chronological' : 'chronological'
+                    );
+                    setCurrentPosition(0);
+                  }}
+                  className={styles.iconButton}
+                  aria-label={
+                    order === 'chronological'
+                      ? 'Switch to reverse chronological order'
+                      : 'Switch to chronological order'
+                  }
+                >
+                  <span>
+                    <FontAwesomeIcon icon={order === 'chronological' ? faChevronUp : faChevronDown} />
+                  </span>
+                </AriaButton>
+                <AriaButton
+                  onPress={() => setShowMomentList((v) => !v)}
+                  className={`${styles.iconButton} ${styles.momentListToggle}`}
+                  aria-label={showMomentList ? 'Close moment list' : 'Open moment list'}
+                >
+                  <FontAwesomeIcon icon={showMomentList ? faXmark : faBars} />
+                </AriaButton>
+              </div>
+            </div>
+
+            {waitingForLiveContent && (
+              <p className={styles.liveHint}>Waiting for new live media to continue playback…</p>
+            )}
+          </div>
         </section>
       </div>
 
-      <div className={styles.timelineSection}>
+      <div className={`${styles.timelineSection} ${showMomentList ? styles.momentListOpen : ''}`}>
+        <div className={styles.momentListCloseRow}>
+          <AriaButton
+            onPress={() => setShowMomentList(false)}
+            className={styles.momentListCloseBtn}
+            aria-label="Close moment list"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+            <span>Close</span>
+          </AriaButton>
+        </div>
         <Timeline>
           {orderedItems.map((item, index) => {
             const isFirstVisible = index === 0;
