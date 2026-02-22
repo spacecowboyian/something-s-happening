@@ -647,6 +647,11 @@ export function PlayableTimeline({
       // Show the repeat icon and fade it out over 3 seconds
       setShowRepeatIcon(true);
       window.setTimeout(() => setShowRepeatIcon(false), 3000);
+      // Restart PlayerMedia's playback timer: briefly pause then resume.
+      // This causes the PlayerMedia timer effect to re-run so onComplete
+      // fires again after the next full play-through.
+      setIsPlaying(false);
+      window.setTimeout(() => setIsPlaying(true), 0);
       return;
     }
 
