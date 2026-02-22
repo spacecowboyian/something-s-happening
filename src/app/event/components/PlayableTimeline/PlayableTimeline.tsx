@@ -124,6 +124,23 @@ function getStatusLabel(status: 'live' | 'upcoming' | 'completed') {
   }
 }
 
+const ITEM_GRADIENTS = [
+  'linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%)',
+  'linear-gradient(135deg, #A78BFA 0%, #60A5FA 100%)',
+  'linear-gradient(135deg, #FCD34D 0%, #F87171 100%)',
+  'linear-gradient(135deg, #34D399 0%, #3B82F6 100%)',
+  'linear-gradient(135deg, #F472B6 0%, #9333EA 100%)',
+  'linear-gradient(135deg, #FB923C 0%, #FBBF24 100%)',
+];
+
+function getItemGradient(itemId: string): string {
+  let hash = 0;
+  for (let i = 0; i < itemId.length; i++) {
+    hash = (hash * 31 + itemId.charCodeAt(i)) | 0;
+  }
+  return ITEM_GRADIENTS[Math.abs(hash) % ITEM_GRADIENTS.length];
+}
+
 interface PlayerMediaProps {
   item?: TimelineItem;
   isPlaying: boolean;
@@ -195,22 +212,7 @@ function PlayerMedia({
       ? backgroundImages[currentChunkIndex % backgroundImages.length]
       : null;
 
-  const fallbackGradient = useMemo(() => {
-    if (!item) return 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
-    const gradients = [
-      'linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%)',
-      'linear-gradient(135deg, #A78BFA 0%, #60A5FA 100%)',
-      'linear-gradient(135deg, #FCD34D 0%, #F87171 100%)',
-      'linear-gradient(135deg, #34D399 0%, #3B82F6 100%)',
-      'linear-gradient(135deg, #F472B6 0%, #9333EA 100%)',
-      'linear-gradient(135deg, #FB923C 0%, #FBBF24 100%)',
-    ];
-    let hash = 0;
-    for (let i = 0; i < item.id.length; i++) {
-      hash = (hash * 31 + item.id.charCodeAt(i)) | 0;
-    }
-    return gradients[Math.abs(hash) % gradients.length];
-  }, [item]);
+  const fallbackGradient = item ? getItemGradient(item.id) : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
 
   useEffect(() => {
     if (!isYouTube) {
@@ -510,6 +512,9 @@ export function PlayableTimeline({
   const touchStartRef = useRef<{ y: number; t: number } | null>(null);
 
   const handlePlayerTap = useCallback(() => {
+    // Toggle play/pause on tap (Shorts/Reels behaviour)
+    setIsPlaying((prev) => !prev);
+    // Also reveal controls briefly
     setControlsVisible(true);
     if (controlsHideTimerRef.current !== null) {
       window.clearTimeout(controlsHideTimerRef.current);
@@ -816,6 +821,10 @@ export function PlayableTimeline({
     slideDirection === 'down' ? styles.slideFromTop : '',
   ].filter(Boolean).join(' ');
 
+  const slideFrameStyle = currentItem
+    ? { background: getItemGradient(currentItem.id) }
+    : undefined;
+
   return (
     <div className={styles.container} style={containerStyle}>
       <div
@@ -832,6 +841,7 @@ export function PlayableTimeline({
               <div
                 key={currentIndex}
                 className={slideFrameClass}
+                style={slideFrameStyle}
                 onAnimationEnd={() => setSlideDirection(null)}
               >
                 <PlayerMedia
