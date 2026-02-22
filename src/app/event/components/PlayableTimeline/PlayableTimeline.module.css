@@ -85,8 +85,8 @@
 }
 
 .playerWindow {
-  min-height: clamp(180px, calc(100vh - 520px), 420px);
-  max-height: 46vh;
+  min-height: clamp(180px, calc(100vh - 420px), 480px);
+  max-height: 52vh;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
@@ -95,6 +95,8 @@
   background-color: var(--color-cinematic-stage);
   border-top: 1px solid var(--color-cinematic-border);
   border-bottom: 0;
+  position: relative;
+  overflow: hidden;
 }
 
 .progressWrap {
@@ -292,6 +294,163 @@
   color: var(--color-accent-800);
 }
 
+/* ── Mobile tap layer ────────────────────────────────────────────────── */
+
+.mobileTapLayer {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobileTapLayer {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    cursor: pointer;
+    background: transparent;
+  }
+}
+
+/* ── Shorts-style bottom overlay ─────────────────────────────────────── */
+
+.playerInfoOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--spacing-2xl) var(--spacing-xl) var(--spacing-md);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.88) 55%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.overlayEventInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.overlayTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  line-height: var(--line-height-lg);
+}
+
+.overlayStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  color: #ffffff;
+}
+
+.overlayStatusBadge.live {
+  background-color: rgba(239, 68, 68, 0.85);
+}
+
+.overlayStatusBadge.upcoming {
+  background-color: rgba(59, 130, 246, 0.85);
+}
+
+.overlayStatusBadge.completed {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.overlaySourceRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  pointer-events: all;
+  flex-wrap: wrap;
+}
+
+.overlayServiceIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-full);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-family-mono);
+}
+
+.overlaySource {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.overlaySource:hover {
+  text-decoration: underline;
+}
+
+.overlayMeta {
+  font-size: var(--font-size-xs);
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-family-mono);
+}
+
+/* ── Text caption (shorts-style) ─────────────────────────────────────── */
+
+.textCaptionContainer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-cinematic-black);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.textCaptionOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.42);
+}
+
+.textCaptionText {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  text-align: center;
+  text-shadow:
+    0 2px 16px rgba(0, 0, 0, 0.7),
+    0 1px 4px rgba(0, 0, 0, 0.5);
+  padding: 0 var(--spacing-xl);
+  margin: 0;
+  line-height: 1.1;
+  max-width: 90%;
+  padding-bottom: 80px;
+}
+
+/* ── Summary (unused, kept for completeness) ─────────────────────────── */
+
 .summarySection {
   display: none;
 }
@@ -310,13 +469,44 @@
 }
 
 @media (max-width: 768px) {
+  /* Full-screen player on mobile */
+  .stickyTopArea {
+    position: fixed;
+    inset: 0;
+    height: 100dvh;
+    border-bottom: none;
+  }
+
   .playerSection {
+    flex: 1;
+    overflow: hidden;
     padding: 0;
   }
 
-  .controlsRow,
-  .progressWrap {
-    padding: 0;
+  .playerWindow {
+    flex: 1;
+    max-height: none;
+    min-height: 0;
+    padding: var(--spacing-md);
+  }
+
+  /* Push timeline below the full-screen player */
+  .timelineSection {
+    margin-top: 100dvh;
+  }
+
+  /* Controls hidden by default on mobile, shown when .controlsVisible is on stickyTopArea */
+  .progressWrap,
+  .controlsRow {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+
+  .stickyTopArea.controlsVisible .progressWrap,
+  .stickyTopArea.controlsVisible .controlsRow {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .controlsRow {
@@ -340,17 +530,18 @@
     max-width: 100%;
   }
 
-  .playerSourceRow,
-  .playerMeta,
   .playerLoading {
     width: 100%;
     max-width: 100%;
   }
 
-  .playerWindow {
-    min-height: clamp(150px, calc(100vh - 470px), 260px);
-    max-height: 36vh;
-    padding: var(--spacing-md);
+  .overlayTitle {
+    font-size: var(--font-size-md);
+  }
+
+  .textCaptionText {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    padding-bottom: 100px;
   }
 }
 

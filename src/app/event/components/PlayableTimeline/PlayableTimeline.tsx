@@ -14,10 +14,10 @@ import {
   faVolumeHigh,
   faVolumeXmark,
 } from '@fortawesome/free-solid-svg-icons';
-import { EventHeader } from '../EventHeader';
 import { Timeline } from '../Timeline';
 import { MomentCard } from '@/components/MomentCard';
 import { getYouTubeVideoId } from '@/lib/youtube';
+import { getYouTubeThumbnail } from '@/lib/youtube-client';
 import styles from './PlayableTimeline.module.css';
 
 export interface TimelineItem {
@@ -113,6 +113,14 @@ function getServiceLabel(url?: string) {
   return 'WEB';
 }
 
+function getStatusLabel(status: 'live' | 'upcoming' | 'completed') {
+  switch (status) {
+    case 'live': return 'Live Now';
+    case 'upcoming': return 'Upcoming';
+    case 'completed': return 'Completed';
+  }
+}
+
 interface PlayerMediaProps {
   item?: TimelineItem;
   isPlaying: boolean;
@@ -124,6 +132,7 @@ interface PlayerMediaProps {
   seekTo: number | null;
   onSeekHandled: () => void;
   onComplete: () => void;
+  backgroundImages?: string[];
 }
 
 function PlayerMedia({
@@ -137,12 +146,68 @@ function PlayerMedia({
   seekTo,
   onSeekHandled,
   onComplete,
+  backgroundImages = [],
 }: PlayerMediaProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const textPlaybackStartRef = useRef<number | null>(null);
   const youTubeId = item?.mediaType === 'video' ? getYouTubeVideoId(item.mediaUrl) : null;
   const isYouTube = Boolean(youTubeId);
+
+  // Text caption chunk logic
+  const textChunks = useMemo(() => {
+    if (!item || item.mediaType !== 'text') return [];
+    const words = item.content.split(/\s+/).filter(Boolean);
+    const chunks: string[] = [];
+    for (let i = 0; i < words.length; i += 2) {
+      chunks.push(words.slice(i, Math.min(i + 2, words.length)).join(' '));
+    }
+    return chunks.length > 0 ? chunks : [item.content];
+  }, [item]);
+
+  // Track chunk progress: { itemId, step } — auto-resets to 0 when itemId changes
+  const [chunkStep, setChunkStep] = useState<{ itemId: string | null; step: number }>({
+    itemId: null,
+    step: 0,
+  });
+  const currentChunkIndex =
+    chunkStep.itemId === (item?.id ?? null)
+      ? chunkStep.step % Math.max(textChunks.length, 1)
+      : 0;
+
+  useEffect(() => {
+    if (!item || item.mediaType !== 'text' || !isPlaying || textChunks.length <= 1) return;
+    const chunkDuration = Math.floor(TEXT_PLAYBACK_INTERVAL_MS / textChunks.length);
+    const timer = window.setInterval(() => {
+      setChunkStep((prev) => ({
+        itemId: item.id,
+        step: prev.itemId === item.id ? prev.step + 1 : 1,
+      }));
+    }, chunkDuration);
+    return () => window.clearInterval(timer);
+  }, [item, isPlaying, textChunks.length]);
+
+  const currentBgImage =
+    backgroundImages.length > 0
+      ? backgroundImages[currentChunkIndex % backgroundImages.length]
+      : null;
+
+  const fallbackGradient = useMemo(() => {
+    if (!item) return 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
+    const gradients = [
+      'linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%)',
+      'linear-gradient(135deg, #A78BFA 0%, #60A5FA 100%)',
+      'linear-gradient(135deg, #FCD34D 0%, #F87171 100%)',
+      'linear-gradient(135deg, #34D399 0%, #3B82F6 100%)',
+      'linear-gradient(135deg, #F472B6 0%, #9333EA 100%)',
+      'linear-gradient(135deg, #FB923C 0%, #FBBF24 100%)',
+    ];
+    let hash = 0;
+    for (let i = 0; i < item.id.length; i++) {
+      hash = (hash * 31 + item.id.charCodeAt(i)) | 0;
+    }
+    return gradients[Math.abs(hash) % gradients.length];
+  }, [item]);
 
   useEffect(() => {
     if (!isYouTube) {
@@ -339,30 +404,24 @@ function PlayerMedia({
 
   if (item.mediaType === 'video' && youTubeId) {
     return (
-      <>
-        <iframe
-          className={styles.youtubePlayer}
-          src={`https://www.youtube.com/embed/${youTubeId}`}
-          title="YouTube video"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-        <p className={styles.playerContent}>{item.content}</p>
-      </>
+      <iframe
+        className={styles.youtubePlayer}
+        src={`https://www.youtube.com/embed/${youTubeId}`}
+        title="YouTube video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
     );
   }
 
   if (item.mediaType === 'video' && item.mediaUrl) {
     return (
-      <>
-        <video
-          ref={videoRef}
-          src={item.mediaUrl}
-          className={styles.nativeMedia}
-          onEnded={onComplete}
-        />
-        <p className={styles.playerContent}>{item.content}</p>
-      </>
+      <video
+        ref={videoRef}
+        src={item.mediaUrl}
+        className={styles.nativeMedia}
+        onEnded={onComplete}
+      />
     );
   }
 
@@ -380,7 +439,21 @@ function PlayerMedia({
     );
   }
 
-  return <p className={styles.playerContent}>{item.content}</p>;
+  return (
+    <div
+      className={styles.textCaptionContainer}
+      style={
+        currentBgImage
+          ? { backgroundImage: `url(${currentBgImage})` }
+          : { background: fallbackGradient }
+      }
+    >
+      <div className={styles.textCaptionOverlay} />
+      <p className={styles.textCaptionText}>
+        {textChunks[currentChunkIndex] ?? item.content}
+      </p>
+    </div>
+  );
 }
 
 export function PlayableTimeline({
@@ -388,7 +461,6 @@ export function PlayableTimeline({
   startDate,
   endDate,
   initialStatus,
-  description,
   initialItems,
   pendingLiveItems = [],
 }: PlayableTimelineProps) {
@@ -423,7 +495,27 @@ export function PlayableTimeline({
   const [repeatPlayback, setRepeatPlayback] = useState(true);
   const [youtubePlayerReady, setYoutubePlayerReady] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(false);
   const playbackModeRef = useRef<PlaybackMode>('continuous');
+  const controlsHideTimerRef = useRef<number | null>(null);
+
+  const handlePlayerTap = useCallback(() => {
+    setControlsVisible(true);
+    if (controlsHideTimerRef.current !== null) {
+      window.clearTimeout(controlsHideTimerRef.current);
+    }
+    controlsHideTimerRef.current = window.setTimeout(() => {
+      setControlsVisible(false);
+    }, 3000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (controlsHideTimerRef.current !== null) {
+        window.clearTimeout(controlsHideTimerRef.current);
+      }
+    };
+  }, []);
 
   const updatePlaybackMode = useCallback((mode: PlaybackMode) => {
     playbackModeRef.current = mode;
@@ -439,6 +531,21 @@ export function PlayableTimeline({
       return order === 'chronological' ? delta : -delta;
     });
   }, [items, order]);
+
+  const backgroundImages = useMemo(() => {
+    const images: string[] = [];
+    for (const item of items) {
+      if (item.mediaType === 'image' && item.mediaUrl) {
+        images.push(item.mediaUrl);
+      } else if (item.mediaType === 'video' && item.mediaUrl) {
+        const ytId = getYouTubeVideoId(item.mediaUrl);
+        if (ytId) {
+          images.push(getYouTubeThumbnail(ytId));
+        }
+      }
+    }
+    return images;
+  }, [items]);
 
   useEffect(() => {
     const statusPoll = window.setInterval(() => {
@@ -488,8 +595,6 @@ export function PlayableTimeline({
 
   const chronologicalFirstId = chronologicalItems[0]?.id;
   const chronologicalLastId = chronologicalItems[chronologicalItems.length - 1]?.id;
-  const headerStartDate = (chronologicalItems[0]?.timestamp as Date | undefined) ?? normalizedStartDate;
-  const headerEndDate = (chronologicalItems[chronologicalItems.length - 1]?.timestamp as Date | undefined) ?? normalizedEndDate;
 
   const setItemRef = useCallback((itemId: string, node: HTMLElement | null) => {
     itemRefs.current[itemId] = node;
@@ -653,32 +758,14 @@ export function PlayableTimeline({
 
   return (
     <div className={styles.container} style={containerStyle}>
-      <div className={styles.stickyTopArea} ref={stickyAreaRef}>
-        <EventHeader
-          title={title}
-          startDate={headerStartDate}
-          endDate={headerEndDate}
-          status={status}
-          description={description}
-        />
-
+      <div
+        className={`${styles.stickyTopArea} ${controlsVisible ? styles.controlsVisible : ''}`}
+        ref={stickyAreaRef}
+      >
         <section className={styles.playerSection} aria-label="Media player">
           <div className={styles.playerWindow}>
             {currentItem ? (
               <>
-                <p className={styles.playerSourceRow}>
-                  <span className={styles.serviceIcon} aria-hidden="true">
-                    {getServiceLabel(currentItem.sourceUrl)}
-                  </span>
-                  <a
-                    href={getProfileUrl(currentItem)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.playerSource}
-                  >
-                    {currentItem.source}
-                  </a>
-                </p>
                 <PlayerMedia
                   item={currentItem}
                   isPlaying={isPlaying}
@@ -690,6 +777,7 @@ export function PlayableTimeline({
                   seekTo={pendingSeek}
                   onSeekHandled={() => setPendingSeek(null)}
                   onComplete={advancePlayback}
+                  backgroundImages={backgroundImages}
                 />
                 {currentIsYouTube && !youtubePlayerReady && (
                   <div className={styles.playerLoading} aria-live="polite">
@@ -697,9 +785,37 @@ export function PlayableTimeline({
                     <span>Loading player…</span>
                   </div>
                 )}
-                <p className={styles.playerMeta}>
-                  {formatDateTimeLocal(currentItem.timestamp)}
-                </p>
+                {/* Mobile-only tap layer: sits above media, captures taps to reveal controls */}
+                <div
+                  className={styles.mobileTapLayer}
+                  onClick={handlePlayerTap}
+                  aria-hidden="true"
+                />
+                <div className={styles.playerInfoOverlay}>
+                  <div className={styles.overlayEventInfo}>
+                    <span className={`${styles.overlayStatusBadge} ${styles[status]}`}>
+                      {getStatusLabel(status)}
+                    </span>
+                    <h1 className={styles.overlayTitle}>{title}</h1>
+                  </div>
+                  <div className={styles.overlaySourceRow}>
+                    <span className={styles.overlayServiceIcon} aria-hidden="true">
+                      {getServiceLabel(currentItem.sourceUrl)}
+                    </span>
+                    <a
+                      href={getProfileUrl(currentItem)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.overlaySource}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {currentItem.source}
+                    </a>
+                    <span className={styles.overlayMeta}>
+                      {formatDateTimeLocal(currentItem.timestamp)}
+                    </span>
+                  </div>
+                </div>
               </>
             ) : (
               <p className={styles.playerContent}>No media available yet.</p>
