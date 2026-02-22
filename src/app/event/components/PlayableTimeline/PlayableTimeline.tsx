@@ -5,6 +5,7 @@ import { Button as AriaButton } from 'react-aria-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBackwardStep,
+  faBars,
   faChevronDown,
   faChevronUp,
   faForwardStep,
@@ -13,6 +14,7 @@ import {
   faRepeat,
   faVolumeHigh,
   faVolumeXmark,
+  faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 import { Timeline } from '../Timeline';
 import { MomentCard } from '@/components/MomentCard';
@@ -496,8 +498,10 @@ export function PlayableTimeline({
   const [youtubePlayerReady, setYoutubePlayerReady] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(false);
+  const [showMomentList, setShowMomentList] = useState(false);
   const playbackModeRef = useRef<PlaybackMode>('continuous');
   const controlsHideTimerRef = useRef<number | null>(null);
+  const touchStartRef = useRef<{ y: number; t: number } | null>(null);
 
   const handlePlayerTap = useCallback(() => {
     setControlsVisible(true);
@@ -663,6 +667,7 @@ export function PlayableTimeline({
     setCurrentPosition(index);
     updatePlaybackMode('single');
     setIsPlaying(true);
+    setShowMomentList(false);
   }, [updatePlaybackMode]);
 
   useEffect(() => {
@@ -683,6 +688,26 @@ export function PlayableTimeline({
     setCurrentPosition((position) => Math.min(position + 1, Math.max(orderedItems.length - 1, 0)));
     setIsPlaying(true);
   }, [orderedItems.length]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartRef.current = { y: e.touches[0].clientY, t: Date.now() };
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStartRef.current) return;
+    const deltaY = e.changedTouches[0].clientY - touchStartRef.current.y;
+    const deltaT = Date.now() - touchStartRef.current.t;
+    touchStartRef.current = null;
+
+    if (Math.abs(deltaY) < 60 || deltaT > 600) return;
+
+    e.preventDefault();
+    if (deltaY < 0) {
+      onNext();
+    } else {
+      onBack();
+    }
+  }, [onNext, onBack]);
 
   const onTogglePlay = useCallback(() => {
     if (!hasItems) {
@@ -763,7 +788,11 @@ export function PlayableTimeline({
         ref={stickyAreaRef}
       >
         <section className={styles.playerSection} aria-label="Media player">
-          <div className={styles.playerWindow}>
+          <div
+            className={styles.playerWindow}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             {currentItem ? (
               <>
                 <PlayerMedia
@@ -822,94 +851,113 @@ export function PlayableTimeline({
             )}
           </div>
 
-          <div className={styles.progressWrap}>
-            <input
-              type="range"
-              min={0}
-              max={Math.max(playbackDuration, 0.1)}
-              step={0.1}
-              value={Math.min(playbackProgress, Math.max(playbackDuration, 0.1))}
-              onChange={(event) => onProgressInput(event.target.value)}
-              className={styles.progressBar}
-              aria-label="Playback progress"
-              disabled={!hasItems || playbackDuration <= 0}
-            />
-          </div>
-
-          <div className={styles.controlsRow}>
-            <div className={styles.transportControls}>
-              <AriaButton
-                onPress={onBack}
-                isDisabled={!hasItems || currentIndex <= 0}
-                className={styles.iconButton}
-                aria-label="Previous moment"
-              >
-                <FontAwesomeIcon icon={faBackwardStep} />
-              </AriaButton>
-              <AriaButton
-                onPress={onTogglePlay}
-                isDisabled={!hasItems}
-                className={styles.iconButton}
-                aria-label={isPlaying ? 'Pause' : 'Play'}
-              >
-                <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
-              </AriaButton>
-              <AriaButton
-                onPress={onNext}
-                isDisabled={!hasItems || isAtEnd}
-                className={styles.iconButton}
-                aria-label="Next moment"
-              >
-                <FontAwesomeIcon icon={faForwardStep} />
-              </AriaButton>
-              <AriaButton
-                onPress={() => setRepeatPlayback((value) => !value)}
-                className={`${styles.iconButton} ${repeatPlayback ? styles.iconButtonActive : ''}`}
-                aria-label={repeatPlayback ? 'Disable repeat' : 'Enable repeat'}
-              >
-                <FontAwesomeIcon icon={faRepeat} />
-              </AriaButton>
-              <AriaButton
-                onPress={() => setIsMuted((value) => !value)}
-                className={`${styles.iconButton} ${!isMuted ? styles.iconButtonActive : ''}`}
-                aria-label={isMuted ? 'Unmute' : 'Mute'}
-              >
-                <FontAwesomeIcon icon={isMuted ? faVolumeXmark : faVolumeHigh} />
-              </AriaButton>
-              <span className={styles.controlTime}>
-                {formatTime(playbackProgress)} / {formatTime(playbackDuration)}
-              </span>
+          <div className={styles.controlsContainer}>
+            <div className={styles.progressWrap}>
+              <input
+                type="range"
+                min={0}
+                max={Math.max(playbackDuration, 0.1)}
+                step={0.1}
+                value={Math.min(playbackProgress, Math.max(playbackDuration, 0.1))}
+                onChange={(event) => onProgressInput(event.target.value)}
+                className={styles.progressBar}
+                aria-label="Playback progress"
+                disabled={!hasItems || playbackDuration <= 0}
+              />
             </div>
 
-            <div className={styles.controls}>
-              <AriaButton
-                onPress={() => {
-                  setOrder((value) =>
-                    value === 'chronological' ? 'reverse-chronological' : 'chronological'
-                  );
-                  setCurrentPosition(0);
-                }}
-                className={styles.iconButton}
-                aria-label={
-                  order === 'chronological'
-                    ? 'Switch to reverse chronological order'
-                    : 'Switch to chronological order'
-                }
-              >
-                <span>
-                  <FontAwesomeIcon icon={order === 'chronological' ? faChevronUp : faChevronDown} />
+            <div className={styles.controlsRow}>
+              <div className={styles.transportControls}>
+                <AriaButton
+                  onPress={onBack}
+                  isDisabled={!hasItems || currentIndex <= 0}
+                  className={styles.iconButton}
+                  aria-label="Previous moment"
+                >
+                  <FontAwesomeIcon icon={faBackwardStep} />
+                </AriaButton>
+                <AriaButton
+                  onPress={onTogglePlay}
+                  isDisabled={!hasItems}
+                  className={styles.iconButton}
+                  aria-label={isPlaying ? 'Pause' : 'Play'}
+                >
+                  <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
+                </AriaButton>
+                <AriaButton
+                  onPress={onNext}
+                  isDisabled={!hasItems || isAtEnd}
+                  className={styles.iconButton}
+                  aria-label="Next moment"
+                >
+                  <FontAwesomeIcon icon={faForwardStep} />
+                </AriaButton>
+                <AriaButton
+                  onPress={() => setRepeatPlayback((value) => !value)}
+                  className={`${styles.iconButton} ${repeatPlayback ? styles.iconButtonActive : ''}`}
+                  aria-label={repeatPlayback ? 'Disable repeat' : 'Enable repeat'}
+                >
+                  <FontAwesomeIcon icon={faRepeat} />
+                </AriaButton>
+                <AriaButton
+                  onPress={() => setIsMuted((value) => !value)}
+                  className={`${styles.iconButton} ${!isMuted ? styles.iconButtonActive : ''}`}
+                  aria-label={isMuted ? 'Unmute' : 'Mute'}
+                >
+                  <FontAwesomeIcon icon={isMuted ? faVolumeXmark : faVolumeHigh} />
+                </AriaButton>
+                <span className={styles.controlTime}>
+                  {formatTime(playbackProgress)} / {formatTime(playbackDuration)}
                 </span>
-              </AriaButton>
-            </div>
-          </div>
+              </div>
 
-          {waitingForLiveContent && (
-            <p className={styles.liveHint}>Waiting for new live media to continue playback…</p>
-          )}
+              <div className={styles.controls}>
+                <AriaButton
+                  onPress={() => {
+                    setOrder((value) =>
+                      value === 'chronological' ? 'reverse-chronological' : 'chronological'
+                    );
+                    setCurrentPosition(0);
+                  }}
+                  className={styles.iconButton}
+                  aria-label={
+                    order === 'chronological'
+                      ? 'Switch to reverse chronological order'
+                      : 'Switch to chronological order'
+                  }
+                >
+                  <span>
+                    <FontAwesomeIcon icon={order === 'chronological' ? faChevronUp : faChevronDown} />
+                  </span>
+                </AriaButton>
+                <AriaButton
+                  onPress={() => setShowMomentList((v) => !v)}
+                  className={`${styles.iconButton} ${styles.momentListToggle}`}
+                  aria-label={showMomentList ? 'Close moment list' : 'Open moment list'}
+                >
+                  <FontAwesomeIcon icon={showMomentList ? faXmark : faBars} />
+                </AriaButton>
+              </div>
+            </div>
+
+            {waitingForLiveContent && (
+              <p className={styles.liveHint}>Waiting for new live media to continue playback…</p>
+            )}
+          </div>
         </section>
       </div>
 
-      <div className={styles.timelineSection}>
+      <div className={`${styles.timelineSection} ${showMomentList ? styles.momentListOpen : ''}`}>
+        <div className={styles.momentListCloseRow}>
+          <AriaButton
+            onPress={() => setShowMomentList(false)}
+            className={styles.momentListCloseBtn}
+            aria-label="Close moment list"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+            <span>Close</span>
+          </AriaButton>
+        </div>
         <Timeline>
           {orderedItems.map((item, index) => {
             const isFirstVisible = index === 0;
