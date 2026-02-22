@@ -136,6 +136,8 @@ async function exportMockData() {
         const mediaUrl =
           post.mediaType === MediaType.VIDEO && post.platform === Platform.YOUTUBE
             ? post.url
+            : post.mediaType === MediaType.IMAGE
+              ? post.url
             : undefined
 
         return {

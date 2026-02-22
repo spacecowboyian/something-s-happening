@@ -68,6 +68,8 @@ export function sourcePostToTimelineItem(post: SourcePost): TimelineItem {
     if (videoId) {
       mediaUrl = post.url
     }
+  } else if (post.mediaType === MediaType.IMAGE) {
+    mediaUrl = post.url
   }
 
   return {

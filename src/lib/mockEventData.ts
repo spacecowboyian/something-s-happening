@@ -10,13 +10,13 @@ export const mockEventData = {
     "description": "Super Bowl LX at Levi's Stadium - An unforgettable game with an unexpected fourth quarter interruption",
     "items": [
       {
-        "id": "q57g0kAlXY0",
-        "timestamp": new Date('2026-02-09T02:42:24.000Z'),
-        "source": "Leasure Trading Company",
-        "sourceUrl": "https://www.youtube.com/watch?v=q57g0kAlXY0",
-        "content": "Streaker fan Alex Gonzalez runs onto field and tackled by security during NFL Super Bowl LX",
+        "id": "UxhcAi5REXw",
+        "timestamp": new Date('2026-02-09T04:09:00.000Z'),
+        "source": "Alex Gonzalez",
+        "sourceUrl": "https://www.youtube.com/watch?v=UxhcAi5REXw",
+        "content": "Fan footage of the Super Bowl streaker sprinting across midfield before security catches up",
         "mediaType": "video" as const,
-        "mediaUrl": "https://www.youtube.com/watch?v=q57g0kAlXY0"
+        "mediaUrl": "https://www.youtube.com/watch?v=UxhcAi5REXw"
       },
       {
         "id": "sb-streaker-1",
@@ -37,6 +37,15 @@ export const mockEventData = {
         "mediaUrl": undefined
       },
       {
+        "id": "sb-photo-1",
+        "timestamp": new Date('2026-02-09T04:09:30.000Z'),
+        "source": "Alex Gonzalez fan cam still",
+        "sourceUrl": "https://i.ytimg.com/vi/UxhcAi5REXw/maxresdefault.jpg",
+        "content": "Still photo from fan footage showing the streaker crossing the Super Bowl logo at midfield",
+        "mediaType": "image" as const,
+        "mediaUrl": "https://i.ytimg.com/vi/UxhcAi5REXw/maxresdefault.jpg"
+      },
+      {
         "id": "sb-streaker-3",
         "timestamp": new Date('2026-02-09T04:11:00.000Z'),
         "source": "@BleacherReport",
@@ -55,6 +64,24 @@ export const mockEventData = {
         "mediaUrl": undefined
       },
       {
+        "id": "f73TiTWGVVg",
+        "timestamp": new Date('2026-02-09T04:12:30.000Z'),
+        "source": "Footballholics: Live Reactions",
+        "sourceUrl": "https://www.youtube.com/watch?v=f73TiTWGVVg",
+        "content": "In-stadium style clip of the streaker interruption and crowd reaction during the fourth quarter",
+        "mediaType": "video" as const,
+        "mediaUrl": "https://www.youtube.com/watch?v=f73TiTWGVVg"
+      },
+      {
+        "id": "sb-photo-2",
+        "timestamp": new Date('2026-02-09T04:13:00.000Z'),
+        "source": "Footballholics frame capture",
+        "sourceUrl": "https://i.ytimg.com/vi/f73TiTWGVVg/hqdefault.jpg",
+        "content": "Sideline still image of security closing in on the Super Bowl streaker",
+        "mediaType": "image" as const,
+        "mediaUrl": "https://i.ytimg.com/vi/f73TiTWGVVg/hqdefault.jpg"
+      },
+      {
         "id": "sb-streaker-4",
         "timestamp": new Date('2026-02-09T04:18:00.000Z'),
         "source": "@NFL_Memes",
@@ -62,6 +89,24 @@ export const mockEventData = {
         "content": "Security guard slipped trying to catch the streaker and fell flat on his face 💀 This Super Bowl has EVERYTHING",
         "mediaType": "text" as const,
         "mediaUrl": undefined
+      },
+      {
+        "id": "5GSqQsySHaI",
+        "timestamp": new Date('2026-02-09T04:20:00.000Z'),
+        "source": "USA TODAY",
+        "sourceUrl": "https://www.youtube.com/watch?v=5GSqQsySHaI",
+        "content": "Media recap of the Super Bowl streaker incident and what happened right after the tackle",
+        "mediaType": "video" as const,
+        "mediaUrl": "https://www.youtube.com/watch?v=5GSqQsySHaI"
+      },
+      {
+        "id": "Rj_-X_HrtAU",
+        "timestamp": new Date('2026-02-09T04:23:00.000Z'),
+        "source": "Elite Picks",
+        "sourceUrl": "https://www.youtube.com/watch?v=Rj_-X_HrtAU",
+        "content": "POV angle from the stands showing the streaker weaving past security at the Super Bowl",
+        "mediaType": "video" as const,
+        "mediaUrl": "https://www.youtube.com/watch?v=Rj_-X_HrtAU"
       },
       {
         "id": "sb-streaker-5",
@@ -107,7 +152,7 @@ export const mockEventData = {
         "sourceUrl": "https://bsky.app/profile/user/post/1",
         "content": "Sample post from Bluesky with image",
         "mediaType": "image" as const,
-        "mediaUrl": undefined
+        "mediaUrl": "https://bsky.app/profile/user/post/1"
       },
       {
         "id": "dQw4w9WgXcQ",

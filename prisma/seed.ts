@@ -75,6 +75,26 @@ async function main() {
       eventId: superBowlEvent.id,
     },
     {
+      platform: Platform.YOUTUBE,
+      platformPostId: 'UxhcAi5REXw',
+      url: 'https://www.youtube.com/watch?v=UxhcAi5REXw',
+      authorHandle: 'Alex Gonzalez',
+      postedAt: new Date('2026-02-09T04:09:00Z'), // 8:09 PM PT
+      mediaType: MediaType.VIDEO,
+      text: 'Fan footage of the Super Bowl streaker sprinting across midfield before security catches up',
+      eventId: superBowlEvent.id,
+    },
+    {
+      platform: Platform.OTHER,
+      platformPostId: 'sb-photo-1',
+      url: 'https://i.ytimg.com/vi/UxhcAi5REXw/maxresdefault.jpg',
+      authorHandle: 'Alex Gonzalez fan cam still',
+      postedAt: new Date('2026-02-09T04:09:30Z'), // 8:09:30 PM PT
+      mediaType: MediaType.IMAGE,
+      text: 'Still photo from fan footage showing the streaker crossing the Super Bowl logo at midfield',
+      eventId: superBowlEvent.id,
+    },
+    {
       platform: Platform.REDDIT,
       platformPostId: 'sb-reddit-1',
       url: 'https://reddit.com/r/nfl/comments/superbowl_streaker',
@@ -92,6 +112,26 @@ async function main() {
       postedAt: new Date('2026-02-09T04:11:00Z'), // 8:11 PM PT
       mediaType: MediaType.TEXT,
       text: 'The streaker at Super Bowl LX just became the most talked about person at Levi\'s Stadium tonight',
+      eventId: superBowlEvent.id,
+    },
+    {
+      platform: Platform.YOUTUBE,
+      platformPostId: 'f73TiTWGVVg',
+      url: 'https://www.youtube.com/watch?v=f73TiTWGVVg',
+      authorHandle: 'Footballholics: Live Reactions',
+      postedAt: new Date('2026-02-09T04:12:30Z'), // 8:12:30 PM PT
+      mediaType: MediaType.VIDEO,
+      text: 'In-stadium style clip of the streaker interruption and crowd reaction during the fourth quarter',
+      eventId: superBowlEvent.id,
+    },
+    {
+      platform: Platform.OTHER,
+      platformPostId: 'sb-photo-2',
+      url: 'https://i.ytimg.com/vi/f73TiTWGVVg/hqdefault.jpg',
+      authorHandle: 'Footballholics frame capture',
+      postedAt: new Date('2026-02-09T04:13:00Z'), // 8:13 PM PT
+      mediaType: MediaType.IMAGE,
+      text: 'Sideline still image of security closing in on the Super Bowl streaker',
       eventId: superBowlEvent.id,
     },
     {
@@ -113,6 +153,26 @@ async function main() {
       postedAt: new Date('2026-02-09T04:18:00Z'), // 8:18 PM PT
       mediaType: MediaType.TEXT,
       text: 'Security guard slipped trying to catch the streaker and fell flat on his face 💀 This Super Bowl has EVERYTHING',
+      eventId: superBowlEvent.id,
+    },
+    {
+      platform: Platform.YOUTUBE,
+      platformPostId: '5GSqQsySHaI',
+      url: 'https://www.youtube.com/watch?v=5GSqQsySHaI',
+      authorHandle: 'USA TODAY',
+      postedAt: new Date('2026-02-09T04:20:00Z'), // 8:20 PM PT
+      mediaType: MediaType.VIDEO,
+      text: 'Media recap of the Super Bowl streaker incident and what happened right after the tackle',
+      eventId: superBowlEvent.id,
+    },
+    {
+      platform: Platform.YOUTUBE,
+      platformPostId: 'Rj_-X_HrtAU',
+      url: 'https://www.youtube.com/watch?v=Rj_-X_HrtAU',
+      authorHandle: 'Elite Picks',
+      postedAt: new Date('2026-02-09T04:23:00Z'), // 8:23 PM PT
+      mediaType: MediaType.VIDEO,
+      text: 'POV angle from the stands showing the streaker weaving past security at the Super Bowl',
       eventId: superBowlEvent.id,
     },
     {

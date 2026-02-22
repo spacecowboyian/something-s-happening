@@ -52,6 +52,7 @@ type PlaybackMode = 'single' | 'continuous';
 
 const TEXT_PLAYBACK_INTERVAL_MS = 10000;
 const LIVE_INGEST_INTERVAL_MS = 10000;
+const RECENT_BG_HISTORY_SIZE = 3;
 
 function getEventStatus(startDate: Date, endDate?: Date): 'live' | 'upcoming' | 'completed' {
   const now = Date.now();
@@ -152,7 +153,7 @@ interface PlayerMediaProps {
   seekTo: number | null;
   onSeekHandled: () => void;
   onComplete: () => void;
-  backgroundImages?: string[];
+  activeBackgroundImage?: string;
 }
 
 function PlayerMedia({
@@ -166,7 +167,7 @@ function PlayerMedia({
   seekTo,
   onSeekHandled,
   onComplete,
-  backgroundImages = [],
+  activeBackgroundImage,
 }: PlayerMediaProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -207,10 +208,7 @@ function PlayerMedia({
     return () => window.clearInterval(timer);
   }, [item, isPlaying, textChunks.length]);
 
-  const currentBgImage =
-    backgroundImages.length > 0
-      ? backgroundImages[currentChunkIndex % backgroundImages.length]
-      : null;
+  const currentBgImage = activeBackgroundImage ?? null;
 
   const fallbackGradient = item ? getItemGradient(item.id) : 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
 
@@ -506,6 +504,9 @@ export function PlayableTimeline({
   const [showMomentList, setShowMomentList] = useState(false);
   const [slideDirection, setSlideDirection] = useState<'up' | 'down' | null>(null);
   const [showRepeatIcon, setShowRepeatIcon] = useState(false);
+  const [textBgImageIndex, setTextBgImageIndex] = useState(0);
+  const recentTextBgIndicesRef = useRef<number[]>([]);
+  const lastTextBgItemIdRef = useRef<string | null>(null);
   const momentRepeatCountRef = useRef(0);
   const playbackModeRef = useRef<PlaybackMode>('continuous');
   const controlsHideTimerRef = useRef<number | null>(null);
@@ -559,7 +560,7 @@ export function PlayableTimeline({
         }
       }
     }
-    return images;
+    return Array.from(new Set(images));
   }, [items]);
 
   useEffect(() => {
@@ -603,6 +604,59 @@ export function PlayableTimeline({
     : -1;
   const currentItem = currentIndex >= 0 ? orderedItems[currentIndex] : undefined;
   const isAtEnd = currentIndex >= 0 && currentIndex === orderedItems.length - 1;
+
+  useEffect(() => {
+    if (!currentItem || currentItem.mediaType !== 'text' || backgroundImages.length === 0) {
+      return;
+    }
+
+    if (lastTextBgItemIdRef.current === currentItem.id) {
+      return;
+    }
+
+    lastTextBgItemIdRef.current = currentItem.id;
+
+    const timer = window.setTimeout(() => {
+      if (backgroundImages.length === 1) {
+        recentTextBgIndicesRef.current = [0];
+        setTextBgImageIndex(0);
+        return;
+      }
+
+      setTextBgImageIndex((previousIndex) => {
+        const maxHistory = Math.min(RECENT_BG_HISTORY_SIZE, backgroundImages.length - 1);
+        const recent = recentTextBgIndicesRef.current.slice(-maxHistory);
+        const blocked = new Set<number>([...recent, previousIndex]);
+        const candidates: number[] = [];
+
+        for (let i = 0; i < backgroundImages.length; i++) {
+          if (!blocked.has(i)) {
+            candidates.push(i);
+          }
+        }
+
+        let nextIndex = previousIndex;
+        if (candidates.length > 0) {
+          const candidateIndex = Math.floor(Math.random() * candidates.length);
+          nextIndex = candidates[candidateIndex];
+        } else {
+          while (nextIndex === previousIndex) {
+            nextIndex = Math.floor(Math.random() * backgroundImages.length);
+          }
+        }
+
+        recentTextBgIndicesRef.current = [...recentTextBgIndicesRef.current, nextIndex].slice(-RECENT_BG_HISTORY_SIZE);
+        return nextIndex;
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [currentItem, backgroundImages]);
+
+  const activeBackgroundImage =
+    backgroundImages.length > 0
+      ? backgroundImages[textBgImageIndex % backgroundImages.length]
+      : undefined;
 
   const chronologicalItems = useMemo(() => {
     return [...items].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
@@ -855,7 +909,7 @@ export function PlayableTimeline({
                   seekTo={pendingSeek}
                   onSeekHandled={() => setPendingSeek(null)}
                   onComplete={advancePlayback}
-                  backgroundImages={backgroundImages}
+                  activeBackgroundImage={activeBackgroundImage}
                 />
                 {currentIsYouTube && !youtubePlayerReady && (
                   <div className={styles.playerLoading} aria-live="polite">
