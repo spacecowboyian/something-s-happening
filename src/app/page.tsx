@@ -26,6 +26,13 @@ export default function Home() {
               {eventData.title}
             </Link>
           ))}
+          <Link
+            href="/live-timing"
+            className={styles.eventLink}
+            aria-label="View live timing results"
+          >
+            🏁 Live Timing
+          </Link>
         </div>
       </main>
     </div>
